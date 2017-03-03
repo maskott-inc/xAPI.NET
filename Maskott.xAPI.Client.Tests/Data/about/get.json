@@ -1,0 +1,77 @@
+﻿{
+  "version": [
+    "1.0.0",
+    "1.0.1",
+    "1.0.2",
+    "1.0.3"
+  ],
+  "extensions": {
+    "xapi": {
+      "activities": {
+        "description": "Endpoint to retrieve a complete activity object.",
+        "endpoint": "/XAPI/activities",
+        "name": "Activities",
+        "methods": [
+          "GET",
+          "HEAD"
+        ]
+      },
+      "agents_profile": {
+        "description": "Saves/retrieves/deletes the specified profile document in the context of the specified agent.",
+        "endpoint": "/XAPI/agents/profile",
+        "name": "Agent Profile",
+        "methods": [
+          "PUT",
+          "POST",
+          "GET",
+          "DELETE",
+          "HEAD"
+        ]
+      },
+      "statements": {
+        "description": "Endpoint to submit and retrieve XAPI statements.",
+        "endpoint": "/XAPI/statements",
+        "name": "Statements",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "HEAD"
+        ]
+      },
+      "activities_state": {
+        "description": "Stores, fetches, or deletes the document specified by the given stateId that exists in the context of the specified activity, agent, and registration (if specified).",
+        "endpoint": "/XAPI/activities/state",
+        "name": "Activities State",
+        "methods": [
+          "PUT",
+          "POST",
+          "GET",
+          "DELETE",
+          "HEAD"
+        ]
+      },
+      "agents": {
+        "description": "Returns a special, Person object for a specified agent.",
+        "endpoint": "/XAPI/agents",
+        "name": "Agents",
+        "methods": [
+          "GET",
+          "HEAD"
+        ]
+      },
+      "activities_profile": {
+        "description": "Saves/retrieves/deletes the specified profile document in the context of the specified activity.",
+        "endpoint": "/XAPI/activities/profile",
+        "name": "Activities Profile",
+        "methods": [
+          "PUT",
+          "POST",
+          "GET",
+          "DELETE",
+          "HEAD"
+        ]
+      }
+    }
+  }
+}

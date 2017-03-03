@@ -8,6 +8,22 @@ namespace Maskott.xAPI.Client.Configuration
     {
         public Uri EndpointUri { get; set; }
         public XApiVersion Version { get; set; }
-        public HttpMessageHandler Handler { get; set; }
+
+        private HttpClient _httpClient;
+        public HttpClient HttpClient
+        {
+            get
+            {
+                if (this._httpClient == null)
+                {
+                    this._httpClient = new HttpClient();
+                }
+                return this._httpClient;
+            }
+            set
+            {
+                this._httpClient = value;
+            }
+        }
     }
 }

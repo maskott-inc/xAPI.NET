@@ -2,6 +2,10 @@
 using Maskott.xAPI.Client.Configuration;
 using Maskott.xAPI.Client.Resources;
 using NUnit.Framework;
+using RichardSzalay.MockHttp;
+using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Maskott.xAPI.Client.Tests.Tests
@@ -16,9 +20,26 @@ namespace Maskott.xAPI.Client.Tests.Tests
             var config = new AnonymousEndpointConfiguration()
             {
                 EndpointUri = Config.EndpointUri,
-                Version = Config.Version
+                Version = Config.Version,
+                HttpClient = this.GetHttpClient()
             };
             this._client = XApi.CreateUsingAnonymousAuthenticator(config);
+        }
+
+        //TODO: refactor HTTP client mocking in base test class
+        //TODO: select file using test method name
+        private HttpClient GetHttpClient()
+        {
+            if (!Config.MockHttpClient)
+            {
+                return null;
+            }
+
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp
+                .When(HttpMethod.Get, $"{Config.EndpointUri}about")
+                .Respond(HttpStatusCode.OK, "application/json", File.ReadAllText(TestContext.CurrentContext.TestDirectory + @"\Data\about\get.json"));
+            return mockHttp.ToHttpClient();
         }
 
         [TearDown]

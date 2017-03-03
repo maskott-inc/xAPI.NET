@@ -5,7 +5,6 @@ using Maskott.xAPI.Client.Endpoints.Impl;
 using Maskott.xAPI.Client.Exceptions;
 using Maskott.xAPI.Client.Resources;
 using System;
-using System.Net.Http;
 
 namespace Maskott.xAPI.Client
 {
@@ -43,14 +42,7 @@ namespace Maskott.xAPI.Client
                 throw new ArgumentException($"Version is not supported. Supported versions are: {supportedVersions}");
             }
 
-            if (configuration.Handler != null)
-            {
-                this._httpClientWrapper.HttpClient = new HttpClient(configuration.Handler);
-            }
-            else
-            {
-                this._httpClientWrapper.HttpClient = new HttpClient();
-            }
+            this._httpClientWrapper.HttpClient = configuration.HttpClient;
             this._httpClientWrapper.HttpClient.BaseAddress = configuration.EndpointUri;
             this._httpClientWrapper.HttpClient.DefaultRequestHeaders.Add("X-Experience-API-Version", configuration.Version.ToString());
         }
