@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Maskott.xAPI.Client.Resources.Metadata
+namespace Maskott.xAPI.Client.Resources
 {
     public class Interaction
     {

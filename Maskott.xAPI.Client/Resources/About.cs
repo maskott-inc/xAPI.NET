@@ -1,4 +1,4 @@
-﻿using Maskott.xAPI.Client.Common;
+﻿using Maskott.xAPI.Client.Resources;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 

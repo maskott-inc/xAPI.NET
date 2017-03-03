@@ -53,7 +53,7 @@
     <Compile Include="Authenticators\BasicHttpAuthenticator.cs" />
     <Compile Include="Authenticators\ILRSAuthenticator.cs" />
     <Compile Include="Authenticators\OAuthAuthenticator.cs" />
-    <Compile Include="Common\XApiVersion.cs" />
+    <Compile Include="Resources\XApiVersion.cs" />
     <Compile Include="Configuration\AnonymousEndpointConfiguration.cs" />
     <Compile Include="Configuration\BasicEndpointConfiguration.cs" />
     <Compile Include="Configuration\EndpointConfiguration.cs" />
@@ -74,10 +74,10 @@
     <Compile Include="IHttpClientWrapper.cs" />
     <Compile Include="Json\XApiVersionConverter.cs" />
     <Compile Include="Resources\Agent.cs" />
-    <Compile Include="Resources\Metadata\AccountObject.cs" />
-    <Compile Include="Resources\Metadata\ActivityDefinition.cs" />
-    <Compile Include="Resources\Metadata\Interaction.cs" />
-    <Compile Include="Resources\Metadata\LanguageMap.cs" />
+    <Compile Include="Resources\AccountObject.cs" />
+    <Compile Include="Resources\ActivityDefinition.cs" />
+    <Compile Include="Resources\Interaction.cs" />
+    <Compile Include="Resources\LanguageMap.cs" />
     <Compile Include="Resources\ObjectResource.cs" />
     <Compile Include="XApiClient.cs" />
     <Compile Include="Endpoints\Impl\StatementsApi.cs" />

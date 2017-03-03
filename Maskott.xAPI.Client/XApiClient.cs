@@ -1,33 +1,28 @@
 ﻿using Maskott.xAPI.Client.Authenticators;
-using Maskott.xAPI.Client.Common;
 using Maskott.xAPI.Client.Configuration;
 using Maskott.xAPI.Client.Endpoints;
 using Maskott.xAPI.Client.Endpoints.Impl;
 using Maskott.xAPI.Client.Exceptions;
+using Maskott.xAPI.Client.Resources;
 using System;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace Maskott.xAPI.Client
 {
-    internal class XApiClient : IXApiClient, IHttpClientWrapper
+    internal class XApiClient : IXApiClient
     {
-        private Uri _endpoint;
-        private XApiVersion _version;
-        private HttpClient _client;
-        private ILRSAuthenticator _authenticator;
+        private readonly HttpClientWrapper _httpClientWrapper;
 
         public XApiClient()
         {
-            this._statements = new StatementsApi(this);
-            this._states = new StatesApi(this);
-            this._agents = new AgentsApi(this);
-            this._activities = new ActivitiesApi(this);
-            this._agentProfiles = new AgentProfilesApi(this);
-            this._activityProfiles = new ActivityProfilesApi(this);
-            this._about = new AboutApi(this);
+            this._httpClientWrapper = new HttpClientWrapper();
+            this._statements = new StatementsApi(this._httpClientWrapper);
+            this._states = new StatesApi(this._httpClientWrapper);
+            this._agents = new AgentsApi(this._httpClientWrapper);
+            this._activities = new ActivitiesApi(this._httpClientWrapper);
+            this._agentProfiles = new AgentProfilesApi(this._httpClientWrapper);
+            this._activityProfiles = new ActivityProfilesApi(this._httpClientWrapper);
+            this._about = new AboutApi(this._httpClientWrapper);
         }
 
         public void SetConfiguration(EndpointConfiguration configuration)
@@ -48,32 +43,33 @@ namespace Maskott.xAPI.Client
                 throw new ArgumentException($"Version is not supported. Supported versions are: {supportedVersions}");
             }
 
-            this._endpoint = configuration.EndpointUri;
-            this._version = configuration.Version;
-
             if (configuration.Handler != null)
             {
-                this._client = new HttpClient(configuration.Handler);
+                this._httpClientWrapper.HttpClient = new HttpClient(configuration.Handler);
             }
             else
             {
-                this._client = new HttpClient();
+                this._httpClientWrapper.HttpClient = new HttpClient();
             }
-            this._client.BaseAddress = configuration.EndpointUri;
-            this._client.DefaultRequestHeaders.Add("X-Experience-API-Version", configuration.Version.ToString());
-        }
-
-        private void EnsureConfigured()
-        {
-            if (this._client == null)
-            {
-                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetConfiguration)} method before accessing resources.");
-            }
+            this._httpClientWrapper.HttpClient.BaseAddress = configuration.EndpointUri;
+            this._httpClientWrapper.HttpClient.DefaultRequestHeaders.Add("X-Experience-API-Version", configuration.Version.ToString());
         }
 
         public void SetAuthenticator(ILRSAuthenticator authenticator)
         {
-            this._authenticator = authenticator;
+            this._httpClientWrapper.Authenticator = authenticator;
+        }
+
+        private void EnsureConfigured()
+        {
+            if (this._httpClientWrapper.HttpClient == null)
+            {
+                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetConfiguration)} method before accessing resources.");
+            }
+            if (this._httpClientWrapper.Authenticator == null)
+            {
+                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetAuthenticator)} method before accessing resources.");
+            }
         }
 
         #region IXApiClient members
@@ -150,84 +146,6 @@ namespace Maskott.xAPI.Client
 
         #endregion
 
-        #region IHttpClientWrapper members
-
-        async Task<T> IHttpClientWrapper.Get<T>(string url)
-        {
-            return await this.Get<T>(url);
-        }
-
-        private async Task<T> Get<T>(string url)
-        {
-            // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-
-            // Ensure authorization is valid
-            await this.SetAuthorizationHeader();
-
-            // Perform request
-            HttpResponseMessage response = await this._client.GetAsync(url);
-
-            // Handle response
-            if (response.StatusCode == HttpStatusCode.Forbidden)
-            {
-                // Credentials are valid but user is not allowed to
-                // perform this operation on this resource
-                throw new ForbiddenException("Invalid xAPI credentials");
-            }
-            else
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            // Parse content
-            return await response.Content.ReadAsAsync<T>();
-        }
-
-        private void ClearSpecificRequestHeaders()
-        {
-            this._client.DefaultRequestHeaders.Authorization = null;
-            this._client.DefaultRequestHeaders.IfMatch.Clear();
-            this._client.DefaultRequestHeaders.IfNoneMatch.Clear();
-        }
-
-        private async Task SetAuthorizationHeader()
-        {
-            AuthorizationHeaderInfos authorization = await this._authenticator.GetAuthorization();
-            if (authorization != null)
-            {
-                this._client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                    authorization.Scheme, authorization.Parameter
-                );
-            }
-            else
-            {
-                this._client.DefaultRequestHeaders.Authorization = null;
-            }
-        }
-
-        private void SetIfMatchHeader(string etag)
-        {
-            if (!string.IsNullOrEmpty(etag))
-            {
-                this._client.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue(etag));
-            }
-        }
-
-        private void SetIfNoneMatchHeader(string etag)
-        {
-            if (string.IsNullOrEmpty(etag))
-            {
-                this._client.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue("*"));
-            }
-            else
-            {
-                this._client.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue(etag));
-            }
-        }
-
-        #endregion
-
         #region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls
@@ -238,7 +156,7 @@ namespace Maskott.xAPI.Client
             {
                 if (disposing)
                 {
-                    this._client.Dispose();
+                    this._httpClientWrapper.HttpClient.Dispose();
                 }
 
                 this.disposedValue = true;

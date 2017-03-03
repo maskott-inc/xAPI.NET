@@ -1,5 +1,4 @@
-﻿using Maskott.xAPI.Client.Resources.Metadata;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace Maskott.xAPI.Client.Resources

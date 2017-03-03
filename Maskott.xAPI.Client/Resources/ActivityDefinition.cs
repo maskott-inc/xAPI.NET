@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Maskott.xAPI.Client.Resources.Metadata
+namespace Maskott.xAPI.Client.Resources
 {
     public class ActivityDefinition<T>
     {

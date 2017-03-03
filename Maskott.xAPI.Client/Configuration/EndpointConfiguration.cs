@@ -1,4 +1,4 @@
-﻿using Maskott.xAPI.Client.Common;
+﻿using Maskott.xAPI.Client.Resources;
 using System;
 using System.Net.Http;
 

@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Maskott.xAPI.Client.Common
+namespace Maskott.xAPI.Client.Resources
 {
     [JsonConverter(typeof(XApiVersionConverter))]
     public class XApiVersion
