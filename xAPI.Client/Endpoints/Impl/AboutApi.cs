@@ -32,7 +32,7 @@ namespace xAPI.Client.Endpoints.Impl
         private Task<T> Get<T>()
         {
             string url = ENDPOINT;
-            return this._client.Get<T>(url);
+            return this._client.GetJson<T>(url);
         }
 
         #endregion

@@ -23,7 +23,7 @@ namespace xAPI.Client.Tests.Tests
                 Username = Config.BasicUsername,
                 Password = Config.BasicPassword
             };
-            this._client = XApi.CreateUsingBasicHttpAuthenticator(config);
+            this._client = XApiClientFactory.CreateUsingBasicHttpAuthenticator(config);
         }
 
         [TearDown]
@@ -53,7 +53,7 @@ namespace xAPI.Client.Tests.Tests
                 Password = Guid.NewGuid().ToString()
             };
 
-            using (IXApiClient client = XApi.CreateUsingBasicHttpAuthenticator(config))
+            using (IXApiClient client = XApiClientFactory.CreateUsingBasicHttpAuthenticator(config))
             {
                 GetAgentRequest request = this.GetAgentRequest();
                 Action action = async () => await this._client.Agents.Get(request);

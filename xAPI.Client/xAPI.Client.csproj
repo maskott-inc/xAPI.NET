@@ -112,7 +112,7 @@
     <Compile Include="Resources\StateDocument.cs" />
     <Compile Include="Resources\Statement.cs" />
     <Compile Include="Results\StatementsResult.cs" />
-    <Compile Include="XApi.cs" />
+    <Compile Include="XApiClientFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

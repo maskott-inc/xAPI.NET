@@ -23,7 +23,7 @@ namespace xAPI.Client.Tests.Tests
                 Version = Config.Version,
                 HttpClient = this.GetHttpClient()
             };
-            this._client = XApi.CreateUsingAnonymousAuthenticator(config);
+            this._client = XApiClientFactory.CreateUsingAnonymousAuthenticator(config);
         }
 
         //TODO: refactor HTTP client mocking in base test class

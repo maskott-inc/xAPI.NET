@@ -40,7 +40,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             string agentStr = JsonConvert.SerializeObject(request.Agent);
             string url = string.Format("{0}?agent={1}", ENDPOINT, Uri.EscapeDataString(agentStr));
-            return this._client.Get<T>(url);
+            return this._client.GetJson<T>(url);
         }
 
         #endregion

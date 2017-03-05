@@ -9,7 +9,7 @@ namespace xAPI.Client
 {
     internal interface IHttpClientWrapper
     {
-        Task<T> Get<T>(string url);
+        Task<T> GetJson<T>(string url);
     }
 
     internal class HttpClientWrapper : IHttpClientWrapper
@@ -19,22 +19,21 @@ namespace xAPI.Client
 
         #region IHttpClientWrapper members
 
-        async Task<T> IHttpClientWrapper.Get<T>(string url)
+        async Task<T> IHttpClientWrapper.GetJson<T>(string url)
         {
-            return await this.Get<T>(url);
+            return await this.GetJson<T>(url);
         }
 
         #endregion
 
         #region Utils
 
-        private async Task<T> Get<T>(string url)
+        private async Task<T> GetJson<T>(string url)
         {
             // Handle specific headers
             this.ClearSpecificRequestHeaders();
-
-            // Ensure authorization is valid
             await this.SetAuthorizationHeader();
+            this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // Perform request
             HttpResponseMessage response = await this.HttpClient.GetAsync(url);
@@ -58,6 +57,7 @@ namespace xAPI.Client
         private void ClearSpecificRequestHeaders()
         {
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
+            this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.IfMatch.Clear();
             this.HttpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
         }

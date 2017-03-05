@@ -3,7 +3,7 @@ using xAPI.Client.Configuration;
 
 namespace xAPI.Client
 {
-    public static class XApi
+    public static class XApiClientFactory
     {
         public static IXApiClient CreateUsingAnonymousAuthenticator(AnonymousEndpointConfiguration config)
         {
