@@ -6,6 +6,34 @@ namespace xAPI.Client.Json
 {
     public class XApiVersionConverter : JsonConverter
     {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(XApiVersion);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+            else if (reader.TokenType == JsonToken.String)
+            {
+                try
+                {
+                    return XApiVersion.Parse((string)reader.Value);
+                }
+                catch (Exception ex)
+                {
+                    throw new JsonSerializationException($"Error parsing version string: {reader.Value}", ex);
+                }
+            }
+            else
+            {
+                throw new JsonSerializationException($"Unexpected token or value when parsing version. Token: {reader.TokenType}, Value: {reader.Value}");
+            }
+        }
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value == null)
@@ -20,37 +48,6 @@ namespace xAPI.Client.Json
             {
                 throw new JsonSerializationException("Expected XApiVersion object value");
             }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null)
-            {
-                return null;
-            }
-            else
-            {
-                if (reader.TokenType == JsonToken.String)
-                {
-                    try
-                    {
-                        return XApiVersion.Parse((string)reader.Value);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new JsonSerializationException($"Error parsing version string: {reader.Value}", ex);
-                    }
-                }
-                else
-                {
-                    throw new JsonSerializationException($"Unexpected token or value when parsing version. Token: {reader.TokenType}, Value: {reader.Value}");
-                }
-            }
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(XApiVersion);
         }
     }
 }

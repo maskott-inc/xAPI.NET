@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using xAPI.Client.Json;
 
 namespace xAPI.Client.Resources
 {
+    [JsonConverter(typeof(ObjectResourceConverter))]
     public abstract class ObjectResource
     {
         [JsonProperty("objectType")]

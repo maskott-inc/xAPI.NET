@@ -53,6 +53,7 @@
     <Compile Include="Authenticators\BasicHttpAuthenticator.cs" />
     <Compile Include="Authenticators\ILRSAuthenticator.cs" />
     <Compile Include="Authenticators\OAuthAuthenticator.cs" />
+    <Compile Include="Json\ObjectResourceConverter.cs" />
     <Compile Include="Resources\XApiVersion.cs" />
     <Compile Include="Configuration\AnonymousEndpointConfiguration.cs" />
     <Compile Include="Configuration\BasicEndpointConfiguration.cs" />
