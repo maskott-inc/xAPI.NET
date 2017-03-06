@@ -1,9 +1,12 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using xAPI.Client.Authenticators;
+using xAPI.Client.Configuration;
 using xAPI.Client.Exceptions;
+using xAPI.Client.Resources;
 
 namespace xAPI.Client
 {
@@ -12,16 +15,53 @@ namespace xAPI.Client
         Task<T> GetJson<T>(string url);
     }
 
-    internal class HttpClientWrapper : IHttpClientWrapper
+    internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
     {
-        internal HttpClient HttpClient { get; set; }
-        internal ILRSAuthenticator Authenticator { get; set; }
+        private HttpClient _httpClient { get; set; }
+        private ILRSAuthenticator _authenticator { get; set; }
 
         #region IHttpClientWrapper members
 
         async Task<T> IHttpClientWrapper.GetJson<T>(string url)
         {
             return await this.GetJson<T>(url);
+        }
+
+        #endregion
+
+        #region Public methods
+
+        public void SetConfiguration(EndpointConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (configuration.EndpointUri == null || !configuration.EndpointUri.IsAbsoluteUri)
+            {
+                throw new ArgumentException("The endpoint must be a valid absolute URI");
+            }
+
+            if (configuration.Version == null || !configuration.Version.IsSupported())
+            {
+                string supportedVersions = string.Join(", ", XApiVersion.SUPPORTED_VERSIONS);
+                throw new ArgumentException($"Version is not supported. Supported versions are: {supportedVersions}");
+            }
+
+            this._httpClient = configuration.HttpClient;
+            this._httpClient.BaseAddress = configuration.EndpointUri;
+            this._httpClient.DefaultRequestHeaders.Add("X-Experience-API-Version", configuration.Version.ToString());
+
+            this._authenticator = configuration.GetAuthenticator();
+        }
+
+        public void EnsureConfigured()
+        {
+            if (this._httpClient == null || this._authenticator == null)
+            {
+                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetConfiguration)} method before accessing resources.");
+            }
         }
 
         #endregion
@@ -33,10 +73,10 @@ namespace xAPI.Client
             // Handle specific headers
             this.ClearSpecificRequestHeaders();
             await this.SetAuthorizationHeader();
-            this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // Perform request
-            HttpResponseMessage response = await this.HttpClient.GetAsync(url);
+            HttpResponseMessage response = await this._httpClient.GetAsync(url);
 
             // Handle response
             if (response.StatusCode == HttpStatusCode.Forbidden)
@@ -56,24 +96,24 @@ namespace xAPI.Client
 
         private void ClearSpecificRequestHeaders()
         {
-            this.HttpClient.DefaultRequestHeaders.Authorization = null;
-            this.HttpClient.DefaultRequestHeaders.Accept.Clear();
-            this.HttpClient.DefaultRequestHeaders.IfMatch.Clear();
-            this.HttpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
+            this._httpClient.DefaultRequestHeaders.Authorization = null;
+            this._httpClient.DefaultRequestHeaders.Accept.Clear();
+            this._httpClient.DefaultRequestHeaders.IfMatch.Clear();
+            this._httpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
         }
 
         private async Task SetAuthorizationHeader()
         {
-            AuthorizationHeaderInfos authorization = await this.Authenticator.GetAuthorization();
+            AuthorizationHeaderInfos authorization = await this._authenticator.GetAuthorization();
             if (authorization != null)
             {
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                     authorization.Scheme, authorization.Parameter
                 );
             }
             else
             {
-                this.HttpClient.DefaultRequestHeaders.Authorization = null;
+                this._httpClient.DefaultRequestHeaders.Authorization = null;
             }
         }
 
@@ -81,7 +121,7 @@ namespace xAPI.Client
         {
             if (!string.IsNullOrEmpty(etag))
             {
-                this.HttpClient.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue(etag));
+                this._httpClient.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue(etag));
             }
         }
 
@@ -89,12 +129,38 @@ namespace xAPI.Client
         {
             if (string.IsNullOrEmpty(etag))
             {
-                this.HttpClient.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue("*"));
+                this._httpClient.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue("*"));
             }
             else
             {
-                this.HttpClient.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue(etag));
+                this._httpClient.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue(etag));
             }
+        }
+
+        #endregion
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this._httpClient.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
         }
 
         #endregion

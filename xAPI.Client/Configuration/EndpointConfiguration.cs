@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using xAPI.Client.Authenticators;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Configuration
@@ -25,5 +26,7 @@ namespace xAPI.Client.Configuration
                 this._httpClient = value;
             }
         }
+
+        public abstract ILRSAuthenticator GetAuthenticator();
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using xAPI.Client.Authenticators;
 using xAPI.Client.Configuration;
 using xAPI.Client.Endpoints;
 using xAPI.Client.Endpoints.Impl;
-using xAPI.Client.Exceptions;
-using xAPI.Client.Resources;
 
 namespace xAPI.Client
 {
@@ -26,42 +23,7 @@ namespace xAPI.Client
 
         public void SetConfiguration(EndpointConfiguration configuration)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            if (configuration.EndpointUri == null || !configuration.EndpointUri.IsAbsoluteUri)
-            {
-                throw new ArgumentException("The endpoint must be a valid absolute URI");
-            }
-
-            if (configuration.Version == null || !configuration.Version.IsSupported())
-            {
-                string supportedVersions = string.Join(", ", XApiVersion.SUPPORTED_VERSIONS);
-                throw new ArgumentException($"Version is not supported. Supported versions are: {supportedVersions}");
-            }
-
-            this._httpClientWrapper.HttpClient = configuration.HttpClient;
-            this._httpClientWrapper.HttpClient.BaseAddress = configuration.EndpointUri;
-            this._httpClientWrapper.HttpClient.DefaultRequestHeaders.Add("X-Experience-API-Version", configuration.Version.ToString());
-        }
-
-        public void SetAuthenticator(ILRSAuthenticator authenticator)
-        {
-            this._httpClientWrapper.Authenticator = authenticator;
-        }
-
-        private void EnsureConfigured()
-        {
-            if (this._httpClientWrapper.HttpClient == null)
-            {
-                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetConfiguration)} method before accessing resources.");
-            }
-            if (this._httpClientWrapper.Authenticator == null)
-            {
-                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetAuthenticator)} method before accessing resources.");
-            }
+            this._httpClientWrapper.SetConfiguration(configuration);
         }
 
         #region IXApiClient members
@@ -71,7 +33,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._statements;
             }
         }
@@ -81,7 +43,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._states;
             }
         }
@@ -91,7 +53,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._agents;
             }
         }
@@ -101,7 +63,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._activities;
             }
         }
@@ -111,7 +73,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._agentProfiles;
             }
         }
@@ -121,7 +83,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._activityProfiles;
             }
         }
@@ -131,7 +93,7 @@ namespace xAPI.Client
         {
             get
             {
-                this.EnsureConfigured();
+                this._httpClientWrapper.EnsureConfigured();
                 return this._about;
             }
         }
@@ -148,7 +110,7 @@ namespace xAPI.Client
             {
                 if (disposing)
                 {
-                    this._httpClientWrapper.HttpClient.Dispose();
+                    this._httpClientWrapper.Dispose();
                 }
 
                 this.disposedValue = true;

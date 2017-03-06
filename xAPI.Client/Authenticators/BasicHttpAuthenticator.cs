@@ -5,10 +5,29 @@ using xAPI.Client.Configuration;
 
 namespace xAPI.Client.Authenticators
 {
-    public class BasicHttpAuthenticator : ILRSAuthenticator<BasicEndpointConfiguration>
+    public class BasicHttpAuthenticator : ILRSAuthenticator
     {
-        private string _username;
-        private string _password;
+        private readonly string _username;
+        private readonly string _password;
+
+        public BasicHttpAuthenticator(BasicEndpointConfiguration config)
+        {
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+            if (string.IsNullOrEmpty(config.Username))
+            {
+                throw new ArgumentNullException(nameof(config.Username));
+            }
+            if (string.IsNullOrEmpty(config.Password))
+            {
+                throw new ArgumentNullException(nameof(config.Password));
+            }
+
+            this._username = config.Username;
+            this._password = config.Password;
+        }
 
         Task<AuthorizationHeaderInfos> ILRSAuthenticator.GetAuthorization()
         {
@@ -27,25 +46,6 @@ namespace xAPI.Client.Authenticators
                 Parameter = this.GetEncodedCredentials()
             };
             return Task.FromResult(result);
-        }
-
-        void ILRSAuthenticator<BasicEndpointConfiguration>.SetConfiguration(BasicEndpointConfiguration config)
-        {
-            if (config == null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-            if (string.IsNullOrEmpty(config.Username))
-            {
-                throw new ArgumentNullException(nameof(config.Username));
-            }
-            if (string.IsNullOrEmpty(config.Password))
-            {
-                throw new ArgumentNullException(nameof(config.Password));
-            }
-
-            this._username = config.Username;
-            this._password = config.Password;
         }
 
         private string GetEncodedCredentials()

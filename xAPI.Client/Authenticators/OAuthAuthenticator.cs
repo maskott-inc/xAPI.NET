@@ -4,17 +4,12 @@ using xAPI.Client.Configuration;
 
 namespace xAPI.Client.Authenticators
 {
-    public class OAuthAuthenticator : ILRSAuthenticator<OAuthEndpointConfiguration>
+    public class OAuthAuthenticator : ILRSAuthenticator
     {
-        private string _clientId;
-        private string _clientSecret;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
 
-        Task<AuthorizationHeaderInfos> ILRSAuthenticator.GetAuthorization()
-        {
-            throw new NotImplementedException();
-        }
-
-        void ILRSAuthenticator<OAuthEndpointConfiguration>.SetConfiguration(OAuthEndpointConfiguration config)
+        public OAuthAuthenticator(OAuthEndpointConfiguration config)
         {
             if (config == null)
             {
@@ -31,6 +26,11 @@ namespace xAPI.Client.Authenticators
 
             this._clientId = config.ClientId;
             this._clientSecret = config.ClientSecret;
+        }
+
+        Task<AuthorizationHeaderInfos> ILRSAuthenticator.GetAuthorization()
+        {
+            throw new NotImplementedException();
         }
     }
 }
