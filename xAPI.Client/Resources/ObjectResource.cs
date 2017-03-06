@@ -5,6 +5,8 @@ namespace xAPI.Client.Resources
     public abstract class ObjectResource
     {
         [JsonProperty("objectType")]
-        public string ObjectType { get; set; }
+        public string ObjectType { get { return this.GetObjectType(); } }
+
+        protected abstract string GetObjectType();
     }
 }

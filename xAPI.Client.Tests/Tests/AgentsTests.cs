@@ -13,6 +13,9 @@ namespace xAPI.Client.Tests.Tests
 {
     public class AgentsTests : BaseTest
     {
+        private const string AGENT_NAME = "foo";
+        private const string AGENT_MBOX = "mailto:test@example.org";
+
         [Test]
         public async Task can_get_agent_definition()
         {
@@ -21,12 +24,13 @@ namespace xAPI.Client.Tests.Tests
             {
                 Agent = new Agent()
                 {
-                    Name = "foo",
-                    MBox = new Uri("mailto:test@example.org")
+                    Name = AGENT_NAME,
+                    MBox = new Uri(AGENT_MBOX)
                 }
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents"))
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("agents/get.json"));
 
             // Act
@@ -46,12 +50,13 @@ namespace xAPI.Client.Tests.Tests
             {
                 Agent = new Agent()
                 {
-                    Name = "foo",
-                    MBox = new Uri("mailto:test@example.org")
+                    Name = AGENT_NAME,
+                    MBox = new Uri(AGENT_MBOX)
                 }
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents"))
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
                 .Respond(HttpStatusCode.Forbidden);
 
             // Act

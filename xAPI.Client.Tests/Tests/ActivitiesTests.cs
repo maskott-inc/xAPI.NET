@@ -13,16 +13,19 @@ namespace xAPI.Client.Tests.Tests
 {
     public class ActivitiesTests : BaseTest
     {
+        private const string ACTIVITY_ID = "http://www.example.org/activity";
+
         [Test]
-        public async Task can_get_activity_definition()
+        public async Task can_get_activity()
         {
             // Arrange
             var request = new GetActivityRequest()
             {
-                ActivityId = new Uri("http://www.example.org/activity")
+                ActivityId = new Uri(ACTIVITY_ID)
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities"))
+                .WithQueryString("activityId", ACTIVITY_ID)
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/get.json"));
 
             // Act
@@ -35,15 +38,59 @@ namespace xAPI.Client.Tests.Tests
         }
 
         [Test]
-        public void cannot_get_activity_definition_if_unauthorized()
+        public async Task can_get_activity_with_strongly_typed_extensions()
         {
             // Arrange
             var request = new GetActivityRequest()
             {
-                ActivityId = new Uri("http://www.example.org/activity")
+                ActivityId = new Uri(ACTIVITY_ID)
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/get.json"));
+
+            // Act
+            Activity<string> activity = await this._client.Activities.Get<string>(request);
+
+            // Assert
+            activity.Should().NotBeNull();
+            activity.Id.Should().Be(request.ActivityId);
+            activity.Definition.Should().NotBeNull();
+            activity.Definition.Extensions.Should().NotBeNullOrEmpty();
+        }
+
+        [Test]
+        public async Task can_request_activity_that_does_not_exist()
+        {
+            // Arrange
+            var request = new GetActivityRequest()
+            {
+                ActivityId = new Uri(ACTIVITY_ID)
+            };
+            this._mockHttp
+                .When(HttpMethod.Get, this.GetApiUrl("activities"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .Respond(HttpStatusCode.NotFound);
+
+            // Act
+            Activity activity = await this._client.Activities.Get(request);
+
+            // Assert
+            activity.Should().BeNull();
+        }
+
+        [Test]
+        public void cannot_get_activity_if_unauthorized()
+        {
+            // Arrange
+            var request = new GetActivityRequest()
+            {
+                ActivityId = new Uri(ACTIVITY_ID)
+            };
+            this._mockHttp
+                .When(HttpMethod.Get, this.GetApiUrl("activities"))
+                .WithQueryString("activityId", ACTIVITY_ID)
                 .Respond(HttpStatusCode.Forbidden);
 
             // Act

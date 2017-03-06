@@ -1,2 +1,21 @@
 ﻿{
+  "objectType": "Person",
+  "name": [
+    "foo"
+  ],
+  "mbox": [
+    "mailto:test@example.org"
+  ],
+  "mbox_sha1sum": [
+    "241021fb0e6289f92815fc210f9e9137262c252e"
+  ],
+  "openid": [
+    "http://www.example.org/"
+  ],
+  "account": [
+    {
+      "homePage": "http://www.example.org/",
+      "name": "foo"
+    }
+  ]
 }

@@ -6,7 +6,7 @@ namespace xAPI.Client.Resources
 {
     public class Person : ObjectResource
     {
-        [JsonProperty("id")]
+        [JsonProperty("name")]
         public List<string> Name { get; set; }
 
         [JsonProperty("mbox", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -20,5 +20,7 @@ namespace xAPI.Client.Resources
 
         [JsonProperty("account", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public List<AccountObject> Account { get; set; }
+
+        protected override string GetObjectType() { return "Person"; }
     }
 }

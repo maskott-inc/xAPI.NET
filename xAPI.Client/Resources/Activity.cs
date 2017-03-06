@@ -14,5 +14,7 @@ namespace xAPI.Client.Resources
 
         [JsonProperty("definition")]
         public ActivityDefinition<T> Definition { get; set; }
+
+        protected override string GetObjectType() { return "Activity"; }
     }
 }

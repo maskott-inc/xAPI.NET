@@ -13,12 +13,7 @@ namespace xAPI.Client.Tests.Tests
     {
         protected override EndpointConfiguration GetEndpointConfiguration()
         {
-            return new AnonymousEndpointConfiguration()
-            {
-                EndpointUri = Config.EndpointUri,
-                Version = Config.Version,
-                HttpClient = Config.MockHttpClient ? this._mockHttp.ToHttpClient() : null
-            };
+            return new AnonymousEndpointConfiguration();
         }
 
         [Test]

@@ -12,7 +12,7 @@ namespace xAPI.Client
 {
     internal interface IHttpClientWrapper
     {
-        Task<T> GetJson<T>(string url);
+        Task<T> GetJson<T>(string url, bool throwIfNotFound);
     }
 
     internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
@@ -22,9 +22,9 @@ namespace xAPI.Client
 
         #region IHttpClientWrapper members
 
-        async Task<T> IHttpClientWrapper.GetJson<T>(string url)
+        async Task<T> IHttpClientWrapper.GetJson<T>(string url, bool throwIfNotFound)
         {
-            return await this.GetJson<T>(url);
+            return await this.GetJson<T>(url, throwIfNotFound);
         }
 
         #endregion
@@ -68,7 +68,7 @@ namespace xAPI.Client
 
         #region Utils
 
-        private async Task<T> GetJson<T>(string url)
+        private async Task<T> GetJson<T>(string url, bool throwIfNotFound)
         {
             // Handle specific headers
             this.ClearSpecificRequestHeaders();
@@ -84,6 +84,10 @@ namespace xAPI.Client
                 // Credentials are valid but user is not allowed to
                 // perform this operation on this resource
                 throw new ForbiddenException("Invalid xAPI credentials");
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound && !throwIfNotFound)
+            {
+                return default(T);
             }
             else
             {

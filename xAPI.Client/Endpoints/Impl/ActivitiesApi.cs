@@ -47,7 +47,7 @@ namespace xAPI.Client.Endpoints.Impl
             }
 
             string url = string.Format("{0}?activityId={1}", ENDPOINT, Uri.EscapeDataString(request.ActivityId.ToString()));
-            return this._client.GetJson<T>(url);
+            return this._client.GetJson<T>(url, throwIfNotFound: false);
         }
 
         #endregion

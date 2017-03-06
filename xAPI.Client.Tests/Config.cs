@@ -6,15 +6,6 @@ namespace xAPI.Client.Tests
 {
     public static class Config
     {
-        public static bool MockHttpClient
-        {
-            get
-            {
-                string setting = ConfigurationManager.AppSettings["MockHttpClient"];
-                return bool.Parse(setting);
-            }
-        }
-
         public static Uri EndpointUri
         {
             get

@@ -15,6 +15,9 @@ namespace xAPI.Client.Tests.Tests
         {
             this._mockHttp = new MockHttpMessageHandler();
             EndpointConfiguration config = this.GetEndpointConfiguration();
+            config.EndpointUri = Config.EndpointUri;
+            config.Version = Config.Version;
+            config.HttpClient = this._mockHttp.ToHttpClient();
             this._client = XApiClientFactory.Create(config);
         }
 
@@ -29,9 +32,6 @@ namespace xAPI.Client.Tests.Tests
         {
             return new BasicEndpointConfiguration()
             {
-                EndpointUri = Config.EndpointUri,
-                Version = Config.Version,
-                HttpClient = Config.MockHttpClient ? this._mockHttp.ToHttpClient() : null,
                 Username = Config.BasicUsername,
                 Password = Config.BasicPassword
             };
