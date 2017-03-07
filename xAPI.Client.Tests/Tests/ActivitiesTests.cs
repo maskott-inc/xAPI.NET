@@ -35,6 +35,8 @@ namespace xAPI.Client.Tests.Tests
             activity.Should().NotBeNull();
             activity.Id.Should().Be(request.ActivityId);
             activity.Definition.Should().NotBeNull();
+            string extensions = activity.Definition.Extensions;
+            extensions.Should().NotBeNullOrEmpty();
         }
 
         [Test]

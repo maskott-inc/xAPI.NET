@@ -54,6 +54,9 @@
     <Compile Include="Authenticators\ILRSAuthenticator.cs" />
     <Compile Include="Authenticators\OAuthAuthenticator.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
+    <Compile Include="Requests\ARequest.cs" />
+    <Compile Include="Requests\ASingleStateRequest.cs" />
+    <Compile Include="Requests\AStateRequest.cs" />
     <Compile Include="Resources\BaseDocument.cs" />
     <Compile Include="Resources\XApiVersion.cs" />
     <Compile Include="Configuration\AnonymousEndpointConfiguration.cs" />

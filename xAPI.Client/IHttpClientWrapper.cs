@@ -13,6 +13,7 @@ namespace xAPI.Client
     internal interface IHttpClientWrapper
     {
         Task<T> GetJson<T>(string url, bool throwIfNotFound);
+        Task GetDocumentAsJson<T>(BaseDocument<T> document, string url, bool throwIfNotFound);
     }
 
     internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
@@ -25,6 +26,11 @@ namespace xAPI.Client
         async Task<T> IHttpClientWrapper.GetJson<T>(string url, bool throwIfNotFound)
         {
             return await this.GetJson<T>(url, throwIfNotFound);
+        }
+
+        async Task IHttpClientWrapper.GetDocumentAsJson<T>(BaseDocument<T> document, string url, bool throwIfNotFound)
+        {
+            await this.GetDocumentAsJson<T>(document, url, throwIfNotFound);
         }
 
         #endregion
@@ -96,6 +102,38 @@ namespace xAPI.Client
 
             // Parse content
             return await response.Content.ReadAsAsync<T>();
+        }
+
+        private async Task GetDocumentAsJson<T>(BaseDocument<T> document, string url, bool throwIfNotFound)
+        {
+            // Handle specific headers
+            this.ClearSpecificRequestHeaders();
+            await this.SetAuthorizationHeader();
+            this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.GetAsync(url);
+
+            // Handle response
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                // Credentials are valid but user is not allowed to
+                // perform this operation on this resource
+                throw new ForbiddenException("Invalid xAPI credentials");
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound && !throwIfNotFound)
+            {
+                document.Content = default(T);
+                return;
+            }
+            else
+            {
+                response.EnsureSuccessStatusCode();
+            }
+
+            document.LastModified = response.Content.Headers.LastModified;
+            document.ETag = response.Headers.ETag?.Tag;
+            document.Content = await response.Content.ReadAsAsync<T>();
         }
 
         private void ClearSpecificRequestHeaders()

@@ -1,6 +1,12 @@
-﻿namespace xAPI.Client.Requests
+﻿using System;
+
+namespace xAPI.Client.Requests
 {
-    public class GetAgentProfilesRequest
+    public class GetAgentProfilesRequest : ARequest
     {
+        internal override void Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

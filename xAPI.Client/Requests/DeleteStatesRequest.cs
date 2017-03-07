@@ -1,6 +1,6 @@
 ﻿namespace xAPI.Client.Requests
 {
-    public class DeleteStatesRequest
+    public class DeleteStatesRequest : AStateRequest
     {
     }
 }

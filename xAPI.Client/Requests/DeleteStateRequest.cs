@@ -1,6 +1,6 @@
 ﻿namespace xAPI.Client.Requests
 {
-    public class DeleteStateRequest
+    public class DeleteStateRequest : ASingleStateRequest
     {
     }
 }

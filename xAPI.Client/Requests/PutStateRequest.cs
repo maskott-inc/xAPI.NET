@@ -1,6 +1,6 @@
 ﻿namespace xAPI.Client.Requests
 {
-    public class PutStateRequest
+    public class PutStateRequest : ASingleStateRequest
     {
     }
 }

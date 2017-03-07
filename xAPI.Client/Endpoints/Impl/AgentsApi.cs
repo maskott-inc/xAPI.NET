@@ -33,10 +33,7 @@ namespace xAPI.Client.Endpoints.Impl
             {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request.Agent == null)
-            {
-                throw new ArgumentNullException(nameof(request.Agent));
-            }
+            request.Validate();
 
             string agentStr = JsonConvert.SerializeObject(request.Agent);
             string url = string.Format("{0}?agent={1}", ENDPOINT, Uri.EscapeDataString(agentStr));

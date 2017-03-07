@@ -37,14 +37,7 @@ namespace xAPI.Client.Endpoints.Impl
             {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request.ActivityId == null)
-            {
-                throw new ArgumentNullException(nameof(request.ActivityId));
-            }
-            if (!request.ActivityId.IsAbsoluteUri)
-            {
-                throw new ArgumentException("IRI should be absolute", nameof(request.ActivityId));
-            }
+            request.Validate();
 
             string url = string.Format("{0}?activityId={1}", ENDPOINT, Uri.EscapeDataString(request.ActivityId.ToString()));
             return this._client.GetJson<T>(url, throwIfNotFound: false);

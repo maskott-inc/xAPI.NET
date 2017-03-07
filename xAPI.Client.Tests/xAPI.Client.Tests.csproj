@@ -85,6 +85,12 @@
     <None Include="Data\activities\get.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\activities\state\get_many.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\activities\state\get.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\agents\get.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -92,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\activities\profile\" />
-    <Folder Include="Data\activities\state\" />
     <Folder Include="Data\agents\profile\" />
     <Folder Include="Data\statements\" />
   </ItemGroup>

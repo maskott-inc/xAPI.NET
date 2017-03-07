@@ -1,6 +1,12 @@
-﻿namespace xAPI.Client.Requests
+﻿using System;
+
+namespace xAPI.Client.Requests
 {
-    public class GetStatementsRequest
+    public class GetStatementsRequest : ARequest
     {
+        internal override void Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
