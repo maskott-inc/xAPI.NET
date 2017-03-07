@@ -20,15 +20,20 @@ namespace xAPI.Client.Endpoints.Impl
 
         Task<StateDocument> IStatesApi.Get(GetStateRequest request)
         {
-            throw new NotImplementedException();
+            return this.Get<StateDocument>(request);
         }
 
-        Task IStatesApi.Put(PutStateRequest request, StateDocument state)
+        Task<StateDocument<T>> IStatesApi.Get<T>(GetStateRequest request)
+        {
+            return this.Get<StateDocument<T>>(request);
+        }
+
+        Task IStatesApi.Put<T>(PutStateRequest request, StateDocument<T> state)
         {
             throw new NotImplementedException();
         }
 
-        Task IStatesApi.Post(PostStateRequest request, StateDocument state)
+        Task IStatesApi.Post<T>(PostStateRequest request, StateDocument<T> state)
         {
             throw new NotImplementedException();
         }
@@ -44,6 +49,15 @@ namespace xAPI.Client.Endpoints.Impl
         }
 
         Task IStatesApi.DeleteMany(DeleteStatesRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Utils
+
+        private Task<T> Get<T>(GetStateRequest request)
         {
             throw new NotImplementedException();
         }
