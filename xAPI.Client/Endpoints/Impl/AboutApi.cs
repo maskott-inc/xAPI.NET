@@ -15,24 +15,14 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IAboutApi members
 
-        Task<About> IAboutApi.Get()
+        async Task<About> IAboutApi.Get()
         {
-            return this.Get<About>();
+            return await this._client.GetJson<About>(ENDPOINT);
         }
 
-        Task<About<T>> IAboutApi.Get<T>()
+        async Task<About<T>> IAboutApi.Get<T>()
         {
-            return this.Get<About<T>>();
-        }
-
-        #endregion
-
-        #region Utils
-
-        private Task<T> Get<T>()
-        {
-            string url = ENDPOINT;
-            return this._client.GetJson<T>(url, throwIfNotFound: true);
+            return await this._client.GetJson<About<T>>(ENDPOINT);
         }
 
         #endregion

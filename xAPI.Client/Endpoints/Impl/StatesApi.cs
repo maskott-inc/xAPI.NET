@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -22,31 +23,63 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<StateDocument> IStatesApi.Get(GetStateRequest request)
         {
+            string url = this.BuildUrl(request);
             var document = new StateDocument();
-            await this.Get(request, document);
+            await this._client.GetDocumentAsJson(url, document);
             return document;
         }
 
         async Task<StateDocument<T>> IStatesApi.Get<T>(GetStateRequest request)
         {
+            string url = this.BuildUrl(request);
             var document = Activator.CreateInstance<StateDocument<T>>();
-            await this.Get(request, document);
+            await this._client.GetDocumentAsJson(url, document);
             return document;
         }
 
-        Task IStatesApi.Put<T>(PutStateRequest<T> request)
+        async Task<bool> IStatesApi.Put<T>(PutStateRequest<T> request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PutDocumentAsJson(url, request.State);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task IStatesApi.Post<T>(PostStateRequest<T> request)
+        async Task<bool> IStatesApi.Post<T>(PostStateRequest<T> request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PostDocumentAsJson(url, request.State);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task IStatesApi.Delete(DeleteStateRequest request)
+        async Task<bool> IStatesApi.Delete(DeleteStateRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.Delete(url, request.ETag);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
         Task<List<string>> IStatesApi.GetMany(GetStatesRequest request)
@@ -54,7 +87,7 @@ namespace xAPI.Client.Endpoints.Impl
             throw new NotImplementedException();
         }
 
-        Task IStatesApi.DeleteMany(DeleteStatesRequest request)
+        Task<bool> IStatesApi.DeleteMany(DeleteStatesRequest request)
         {
             throw new NotImplementedException();
         }
@@ -63,7 +96,7 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region Utils
 
-        private async Task Get<T>(GetStateRequest request, StateDocument<T> document)
+        private string BuildUrl(ASingleStateRequest request)
         {
             if (request == null)
             {
@@ -81,7 +114,7 @@ namespace xAPI.Client.Endpoints.Impl
             }
             builder.AppendFormat("&stateId={0}", Uri.EscapeDataString(request.StateId));
 
-            await this._client.GetDocumentAsJson(document, builder.ToString(), throwIfNotFound: true);
+            return builder.ToString();
         }
 
         #endregion

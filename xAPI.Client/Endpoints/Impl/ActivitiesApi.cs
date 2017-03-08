@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -17,21 +18,21 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IActivitiesApi members
 
-        Task<Activity> IActivitiesApi.Get(GetActivityRequest request)
+        async Task<Activity> IActivitiesApi.Get(GetActivityRequest request)
         {
-            return this.Get<Activity>(request);
+            return await this.Get<Activity>(request);
         }
 
-        Task<Activity<T>> IActivitiesApi.Get<T>(GetActivityRequest request)
+        async Task<Activity<T>> IActivitiesApi.Get<T>(GetActivityRequest request)
         {
-            return this.Get<Activity<T>>(request);
+            return await this.Get<Activity<T>>(request);
         }
 
         #endregion
 
         #region Utils
 
-        private Task<T> Get<T>(GetActivityRequest request)
+        private async Task<T> Get<T>(GetActivityRequest request)
         {
             if (request == null)
             {
@@ -40,7 +41,14 @@ namespace xAPI.Client.Endpoints.Impl
             request.Validate();
 
             string url = string.Format("{0}?activityId={1}", ENDPOINT, Uri.EscapeDataString(request.ActivityId.ToString()));
-            return this._client.GetJson<T>(url, throwIfNotFound: false);
+            try
+            {
+                return await this._client.GetJson<T>(url);
+            }
+            catch (NotFoundException)
+            {
+                return default(T);
+            }
         }
 
         #endregion

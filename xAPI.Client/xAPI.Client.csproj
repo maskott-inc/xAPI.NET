@@ -53,6 +53,13 @@
     <Compile Include="Authenticators\BasicHttpAuthenticator.cs" />
     <Compile Include="Authenticators\ILRSAuthenticator.cs" />
     <Compile Include="Authenticators\OAuthAuthenticator.cs" />
+    <Compile Include="Exceptions\BadRequestException.cs" />
+    <Compile Include="Exceptions\TooManyRequestsException.cs" />
+    <Compile Include="Exceptions\EntityTooLargeException.cs" />
+    <Compile Include="Exceptions\NotFoundException.cs" />
+    <Compile Include="Exceptions\PreConditionFailedException.cs" />
+    <Compile Include="Exceptions\ConflictException.cs" />
+    <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
     <Compile Include="Requests\ARequest.cs" />
     <Compile Include="Requests\ASingleStateRequest.cs" />

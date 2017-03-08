@@ -18,16 +18,7 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IAgentsApi members
 
-        Task<Person> IAgentsApi.Get(GetAgentRequest request)
-        {
-            return this.Get<Person>(request);
-        }
-
-        #endregion
-
-        #region Utils
-
-        private Task<T> Get<T>(GetAgentRequest request)
+        async Task<Person> IAgentsApi.Get(GetAgentRequest request)
         {
             if (request == null)
             {
@@ -37,7 +28,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             string agentStr = JsonConvert.SerializeObject(request.Agent);
             string url = string.Format("{0}?agent={1}", ENDPOINT, Uri.EscapeDataString(agentStr));
-            return this._client.GetJson<T>(url, throwIfNotFound: true);
+            return await this._client.GetJson<Person>(url);
         }
 
         #endregion

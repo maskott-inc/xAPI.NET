@@ -126,7 +126,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public void can_put_state()
+        public async Task can_put_new_state()
         {
             // Arrange
             var state = new StateDocument<string>()
@@ -152,14 +152,14 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.NoContent);
 
             // Act
-            Func<Task> action = async () => await this._client.States.Put(request);
+            bool result = await this._client.States.Put(request);
 
             // Assert
-            action.ShouldNotThrow();
+            result.Should().BeTrue();
         }
 
         [Test]
-        public void can_post_state()
+        public async Task can_post_new_state()
         {
             // Arrange
             var state = new StateDocument<string>()
@@ -185,17 +185,22 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.NoContent);
 
             // Act
-            Func<Task> action = async () => await this._client.States.Post(request);
+            bool result = await this._client.States.Post(request);
 
             // Assert
-            action.ShouldNotThrow();
+            result.Should().BeTrue();
         }
 
         [Test]
-        public void can_delete_state()
+        public async Task can_delete_existing_state_with_etag()
         {
             // Arrange
-            var request = DeleteStateRequest.Create();
+            var state = new StateDocument<string>()
+            {
+                Content = "foo",
+                ETag = ETAG
+            };
+            var request = DeleteStateRequest.Create(state);
             request.ActivityId = new Uri(ACTIVITY_ID);
             request.Agent = new Agent()
             {
@@ -203,6 +208,7 @@ namespace xAPI.Client.Tests
                 MBox = new Uri(AGENT_MBOX)
             };
             request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
@@ -213,10 +219,10 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.NoContent);
 
             // Act
-            Func<Task> action = async () => await this._client.States.Delete(request);
+            bool result = await this._client.States.Delete(request);
 
             // Assert
-            action.ShouldNotThrow();
+            result.Should().BeTrue();
         }
 
         [Test]

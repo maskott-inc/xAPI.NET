@@ -12,8 +12,11 @@ namespace xAPI.Client
 {
     internal interface IHttpClientWrapper
     {
-        Task<T> GetJson<T>(string url, bool throwIfNotFound);
-        Task GetDocumentAsJson<T>(BaseDocument<T> document, string url, bool throwIfNotFound);
+        Task<T> GetJson<T>(string url);
+        Task GetDocumentAsJson<T>(string url, BaseDocument<T> document);
+        Task PutDocumentAsJson<T>(string url, BaseDocument<T> document);
+        Task PostDocumentAsJson<T>(string url, BaseDocument<T> document);
+        Task Delete(string url, string etag);
     }
 
     internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
@@ -23,14 +26,29 @@ namespace xAPI.Client
 
         #region IHttpClientWrapper members
 
-        async Task<T> IHttpClientWrapper.GetJson<T>(string url, bool throwIfNotFound)
+        async Task<T> IHttpClientWrapper.GetJson<T>(string url)
         {
-            return await this.GetJson<T>(url, throwIfNotFound);
+            return await this.GetJson<T>(url);
         }
 
-        async Task IHttpClientWrapper.GetDocumentAsJson<T>(BaseDocument<T> document, string url, bool throwIfNotFound)
+        async Task IHttpClientWrapper.GetDocumentAsJson<T>(string url, BaseDocument<T> document)
         {
-            await this.GetDocumentAsJson<T>(document, url, throwIfNotFound);
+            await this.GetDocumentAsJson<T>(url, document);
+        }
+
+        async Task IHttpClientWrapper.PutDocumentAsJson<T>(string url, BaseDocument<T> document)
+        {
+            await this.PutDocumentAsJson<T>(url, document);
+        }
+
+        async Task IHttpClientWrapper.PostDocumentAsJson<T>(string url, BaseDocument<T> document)
+        {
+            await this.PostDocumentAsJson<T>(url, document);
+        }
+
+        async Task IHttpClientWrapper.Delete(string url, string etag)
+        {
+            await this.Delete(url, etag);
         }
 
         #endregion
@@ -74,66 +92,80 @@ namespace xAPI.Client
 
         #region Utils
 
-        private async Task<T> GetJson<T>(string url, bool throwIfNotFound)
+        private async Task<T> GetJson<T>(string url)
         {
             // Handle specific headers
             this.ClearSpecificRequestHeaders();
             await this.SetAuthorizationHeader();
-            this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            this.SetAcceptJsonContentType();
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.GetAsync(url);
-
-            // Handle response
-            if (response.StatusCode == HttpStatusCode.Forbidden)
-            {
-                // Credentials are valid but user is not allowed to
-                // perform this operation on this resource
-                throw new ForbiddenException("Invalid xAPI credentials");
-            }
-            else if (response.StatusCode == HttpStatusCode.NotFound && !throwIfNotFound)
-            {
-                return default(T);
-            }
-            else
-            {
-                response.EnsureSuccessStatusCode();
-            }
+            this.EnsureResponseIsValid(response);
 
             // Parse content
             return await response.Content.ReadAsAsync<T>();
         }
 
-        private async Task GetDocumentAsJson<T>(BaseDocument<T> document, string url, bool throwIfNotFound)
+        private async Task GetDocumentAsJson<T>(string url, BaseDocument<T> document)
         {
             // Handle specific headers
             this.ClearSpecificRequestHeaders();
             await this.SetAuthorizationHeader();
-            this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            this.SetAcceptJsonContentType();
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.GetAsync(url);
-
-            // Handle response
-            if (response.StatusCode == HttpStatusCode.Forbidden)
-            {
-                // Credentials are valid but user is not allowed to
-                // perform this operation on this resource
-                throw new ForbiddenException("Invalid xAPI credentials");
-            }
-            else if (response.StatusCode == HttpStatusCode.NotFound && !throwIfNotFound)
-            {
-                document.Content = default(T);
-                return;
-            }
-            else
-            {
-                response.EnsureSuccessStatusCode();
-            }
+            this.EnsureResponseIsValid(response);
 
             document.LastModified = response.Content.Headers.LastModified;
             document.ETag = response.Headers.ETag?.Tag;
             document.Content = await response.Content.ReadAsAsync<T>();
+        }
+
+        private async Task PutDocumentAsJson<T>(string url, BaseDocument<T> document)
+        {
+            // Handle specific headers
+            this.ClearSpecificRequestHeaders();
+            await this.SetAuthorizationHeader();
+            this.SetIfMatchHeader(document.ETag);
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.PutAsJsonAsync(url, document.Content);
+            this.EnsureResponseIsValid(response);
+
+            document.LastModified = response.Content?.Headers.LastModified ?? document.LastModified;
+            document.ETag = response.Headers.ETag?.Tag ?? document.ETag;
+        }
+
+        private async Task PostDocumentAsJson<T>(string url, BaseDocument<T> document)
+        {
+            // Handle specific headers
+            this.ClearSpecificRequestHeaders();
+            await this.SetAuthorizationHeader();
+            this.SetIfMatchHeader(document.ETag);
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.PostAsJsonAsync(url, document.Content);
+            this.EnsureResponseIsValid(response);
+
+            document.LastModified = response.Content?.Headers.LastModified ?? document.LastModified;
+            document.ETag = response.Headers.ETag?.Tag ?? document.ETag;
+        }
+
+        private async Task Delete(string url, string etag)
+        {
+            // Handle specific headers
+            this.ClearSpecificRequestHeaders();
+            await this.SetAuthorizationHeader();
+            if (!string.IsNullOrEmpty(etag))
+            {
+                this.SetIfMatchHeader(etag);
+            }
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.DeleteAsync(url);
+            this.EnsureResponseIsValid(response);
         }
 
         private void ClearSpecificRequestHeaders()
@@ -159,23 +191,60 @@ namespace xAPI.Client
             }
         }
 
+        private void SetAcceptJsonContentType()
+        {
+            this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
         private void SetIfMatchHeader(string etag)
         {
             if (!string.IsNullOrEmpty(etag))
             {
                 this._httpClient.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue(etag));
             }
+            else
+            {
+                this._httpClient.DefaultRequestHeaders.IfNoneMatch.Add(EntityTagHeaderValue.Any);
+            }
         }
 
-        private void SetIfNoneMatchHeader(string etag)
+        private void EnsureResponseIsValid(HttpResponseMessage response)
         {
-            if (string.IsNullOrEmpty(etag))
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                this._httpClient.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue("*"));
+                throw new BadRequestException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new ForbiddenException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                throw new ConflictException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == HttpStatusCode.PreconditionFailed)
+            {
+                throw new PreConditionFailedException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == HttpStatusCode.RequestEntityTooLarge)
+            {
+                throw new EntityTooLargeException(response.ReasonPhrase);
+            }
+            else if (response.StatusCode == (HttpStatusCode)429)
+            {
+                throw new TooManyRequestsException(response.ReasonPhrase);
             }
             else
             {
-                this._httpClient.DefaultRequestHeaders.IfNoneMatch.Add(new EntityTagHeaderValue(etag));
+                response.EnsureSuccessStatusCode();
             }
         }
 
