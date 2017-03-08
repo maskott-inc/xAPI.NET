@@ -18,6 +18,6 @@ namespace xAPI.Client.Endpoints
 
         Task<List<string>> GetMany(GetStatesRequest request);
 
-        Task<bool> DeleteMany(DeleteStatesRequest request);
+        Task DeleteMany(DeleteStatesRequest request);
     }
 }

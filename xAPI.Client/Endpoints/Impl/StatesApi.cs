@@ -82,14 +82,18 @@ namespace xAPI.Client.Endpoints.Impl
             }
         }
 
-        Task<List<string>> IStatesApi.GetMany(GetStatesRequest request)
+        async Task<List<string>> IStatesApi.GetMany(GetStatesRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            return await this._client.GetJson<List<string>>(url);
         }
 
-        Task<bool> IStatesApi.DeleteMany(DeleteStatesRequest request)
+        async Task IStatesApi.DeleteMany(DeleteStatesRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            await this._client.Delete(url, etag: null);
         }
 
         #endregion
@@ -113,6 +117,50 @@ namespace xAPI.Client.Endpoints.Impl
                 builder.AppendFormat("&registration={0}", Uri.EscapeDataString(request.Registration.Value.ToString()));
             }
             builder.AppendFormat("&stateId={0}", Uri.EscapeDataString(request.StateId));
+
+            return builder.ToString();
+        }
+
+        private string BuildUrl(GetStatesRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
+            var builder = new StringBuilder(ENDPOINT);
+            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
+            if (request.Registration.HasValue)
+            {
+                builder.AppendFormat("&registration={0}", Uri.EscapeDataString(request.Registration.Value.ToString()));
+            }
+            if (request.Since.HasValue)
+            {
+                builder.AppendFormat("&since={0}", Uri.EscapeDataString(request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")));
+            }
+
+            return builder.ToString();
+        }
+
+        private string BuildUrl(DeleteStatesRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
+            var builder = new StringBuilder(ENDPOINT);
+            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
+            if (request.Registration.HasValue)
+            {
+                builder.AppendFormat("&registration={0}", Uri.EscapeDataString(request.Registration.Value.ToString()));
+            }
 
             return builder.ToString();
         }
