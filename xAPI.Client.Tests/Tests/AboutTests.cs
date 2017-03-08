@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Configuration;
 using xAPI.Client.Resources;
 
-namespace xAPI.Client.Tests.Tests
+namespace xAPI.Client.Tests
 {
     public class AboutTests : BaseTest
     {

@@ -1,4 +1,4 @@
-﻿namespace xAPI.Client.Tests.Tests
+﻿namespace xAPI.Client.Tests
 {
     public class AgentProfilesTests : BaseTest
     {

@@ -3,7 +3,7 @@ using RichardSzalay.MockHttp;
 using System.IO;
 using xAPI.Client.Configuration;
 
-namespace xAPI.Client.Tests.Tests
+namespace xAPI.Client.Tests
 {
     public abstract class BaseTest
     {

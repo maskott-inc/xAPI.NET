@@ -9,7 +9,7 @@ using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
-namespace xAPI.Client.Tests.Tests
+namespace xAPI.Client.Tests
 {
     public class AgentsTests : BaseTest
     {
