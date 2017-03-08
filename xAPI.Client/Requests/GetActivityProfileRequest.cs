@@ -1,12 +1,6 @@
-﻿using System;
-
-namespace xAPI.Client.Requests
+﻿namespace xAPI.Client.Requests
 {
-    public class GetActivityProfileRequest : ARequest
+    public class GetActivityProfileRequest : ASingleActivityProfileRequest
     {
-        internal override void Validate()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

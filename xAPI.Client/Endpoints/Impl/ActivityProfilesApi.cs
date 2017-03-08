@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -18,29 +20,109 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IActivityProfilesApi members
 
-        Task<ActivityProfileDocument> IActivityProfilesApi.Get(GetActivityProfileRequest request)
+        async Task<ActivityProfileDocument> IActivityProfilesApi.Get(GetActivityProfileRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+            var document = new ActivityProfileDocument();
+            await this._client.GetDocumentAsJson(url, document);
+            return document;
         }
 
-        Task IActivityProfilesApi.Put<T>(PutActivityProfileRequest<T> request)
+        async Task<ActivityProfileDocument<T>> IActivityProfilesApi.Get<T>(GetActivityProfileRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+            var document = Activator.CreateInstance<ActivityProfileDocument<T>>();
+            await this._client.GetDocumentAsJson(url, document);
+            return document;
         }
 
-        Task IActivityProfilesApi.Post<T>(PostActivityProfileRequest<T> request)
+        async Task<bool> IActivityProfilesApi.Put<T>(PutActivityProfileRequest<T> request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PutDocumentAsJson(url, request.ActivityProfile);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task IActivityProfilesApi.Delete(DeleteActivityProfileRequest request)
+        async Task<bool> IActivityProfilesApi.Post<T>(PostActivityProfileRequest<T> request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PostDocumentAsJson(url, request.ActivityProfile);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task<List<string>> IActivityProfilesApi.GetMany(GetActivityProfilesRequest request)
+        async Task<bool> IActivityProfilesApi.Delete(DeleteActivityProfileRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.Delete(url, request.ETag);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
+        }
+
+        async Task<List<string>> IActivityProfilesApi.GetMany(GetActivityProfilesRequest request)
+        {
+            string url = this.BuildUrl(request);
+
+            return await this._client.GetJson<List<string>>(url);
+        }
+
+        #endregion
+
+        #region Utils
+
+        private string BuildUrl(ASingleActivityProfileRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
+            var builder = new StringBuilder(ENDPOINT);
+            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            builder.AppendFormat("&profileId={0}", Uri.EscapeDataString(request.ProfileId));
+
+            return builder.ToString();
+        }
+
+        private string BuildUrl(GetActivityProfilesRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
+            var builder = new StringBuilder(ENDPOINT);
+            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            if (request.Since.HasValue)
+            {
+                builder.AppendFormat("&since={0}", Uri.EscapeDataString(request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")));
+            }
+
+            return builder.ToString();
         }
 
         #endregion

@@ -8,9 +8,14 @@ namespace xAPI.Client.Endpoints
     public interface IActivityProfilesApi
     {
         Task<ActivityProfileDocument> Get(GetActivityProfileRequest request);
-        Task Put<T>(PutActivityProfileRequest<T> request);
-        Task Post<T>(PostActivityProfileRequest<T> request);
-        Task Delete(DeleteActivityProfileRequest request);
+        Task<ActivityProfileDocument<T>> Get<T>(GetActivityProfileRequest request);
+
+        Task<bool> Put<T>(PutActivityProfileRequest<T> request);
+
+        Task<bool> Post<T>(PostActivityProfileRequest<T> request);
+
+        Task<bool> Delete(DeleteActivityProfileRequest request);
+
         Task<List<string>> GetMany(GetActivityProfilesRequest request);
     }
 }

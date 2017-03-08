@@ -11,15 +11,23 @@ namespace xAPI.Client.Requests
         }
     }
 
-    public class PostActivityProfileRequest<T> : ARequest
+    public class PostActivityProfileRequest<T> : ASingleActivityProfileRequest
     {
+        public ActivityProfileDocument<T> ActivityProfile { get; private set; }
+
         internal PostActivityProfileRequest(ActivityProfileDocument<T> activityProfile)
         {
+            this.ActivityProfile = activityProfile;
         }
 
         internal override void Validate()
         {
-            throw new NotImplementedException();
+            base.Validate();
+
+            if (this.ActivityProfile == null)
+            {
+                throw new ArgumentNullException(nameof(this.ActivityProfile));
+            }
         }
     }
 }

@@ -2,11 +2,8 @@
 
 namespace xAPI.Client.Requests
 {
-    public class GetActivityProfilesRequest : ARequest
+    public class GetActivityProfilesRequest : AActivityProfileRequest
     {
-        internal override void Validate()
-        {
-            throw new NotImplementedException();
-        }
+        public DateTimeOffset? Since { get; set; }
     }
 }

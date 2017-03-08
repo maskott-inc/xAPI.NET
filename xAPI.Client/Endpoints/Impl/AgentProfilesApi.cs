@@ -23,17 +23,22 @@ namespace xAPI.Client.Endpoints.Impl
             throw new NotImplementedException();
         }
 
-        Task IAgentProfilesApi.Put<T>(PutAgentProfileRequest<T> request)
+        Task<AgentProfileDocument<T>> IAgentProfilesApi.Get<T>(GetAgentProfileRequest request)
         {
             throw new NotImplementedException();
         }
 
-        Task IAgentProfilesApi.Post<T>(PostAgentProfileRequest<T> request)
+        Task<bool> IAgentProfilesApi.Put<T>(PutAgentProfileRequest<T> request)
         {
             throw new NotImplementedException();
         }
 
-        Task IAgentProfilesApi.Delete(DeleteAgentProfileRequest request)
+        Task<bool> IAgentProfilesApi.Post<T>(PostAgentProfileRequest<T> request)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IAgentProfilesApi.Delete(DeleteAgentProfileRequest request)
         {
             throw new NotImplementedException();
         }
