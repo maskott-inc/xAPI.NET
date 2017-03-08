@@ -61,6 +61,8 @@
     <Compile Include="Exceptions\ConflictException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
+    <Compile Include="Requests\AAgentProfileRequest.cs" />
+    <Compile Include="Requests\ASingleAgentProfileRequest.cs" />
     <Compile Include="Requests\ASingleActivityProfileRequest.cs" />
     <Compile Include="Requests\AActivityProfileRequest.cs" />
     <Compile Include="Requests\ARequest.cs" />

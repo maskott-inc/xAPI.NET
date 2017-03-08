@@ -2,11 +2,8 @@
 
 namespace xAPI.Client.Requests
 {
-    public class GetAgentProfilesRequest : ARequest
+    public class GetAgentProfilesRequest : AAgentProfileRequest
     {
-        internal override void Validate()
-        {
-            throw new NotImplementedException();
-        }
+        public DateTimeOffset? Since { get; set; }
     }
 }

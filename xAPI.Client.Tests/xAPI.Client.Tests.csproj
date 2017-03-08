@@ -96,10 +96,15 @@
     <None Include="Data\agents\get.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\agents\profile\get.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\agents\profile\get_many.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\agents\profile\" />
     <Folder Include="Data\statements\" />
   </ItemGroup>
   <ItemGroup>

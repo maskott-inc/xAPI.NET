@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -18,34 +21,111 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IAgentProfilesApi members
 
-        Task<AgentProfileDocument> IAgentProfilesApi.Get(GetAgentProfileRequest request)
+        async Task<AgentProfileDocument> IAgentProfilesApi.Get(GetAgentProfileRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+            var document = new AgentProfileDocument();
+            await this._client.GetDocumentAsJson(url, document);
+            return document;
         }
 
-        Task<AgentProfileDocument<T>> IAgentProfilesApi.Get<T>(GetAgentProfileRequest request)
+        async Task<AgentProfileDocument<T>> IAgentProfilesApi.Get<T>(GetAgentProfileRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+            var document = Activator.CreateInstance<AgentProfileDocument<T>>();
+            await this._client.GetDocumentAsJson(url, document);
+            return document;
         }
 
-        Task<bool> IAgentProfilesApi.Put<T>(PutAgentProfileRequest<T> request)
+        async Task<bool> IAgentProfilesApi.Put<T>(PutAgentProfileRequest<T> request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PutDocumentAsJson(url, request.AgentProfile);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task<bool> IAgentProfilesApi.Post<T>(PostAgentProfileRequest<T> request)
+        async Task<bool> IAgentProfilesApi.Post<T>(PostAgentProfileRequest<T> request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PostDocumentAsJson(url, request.AgentProfile);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task<bool> IAgentProfilesApi.Delete(DeleteAgentProfileRequest request)
+        async Task<bool> IAgentProfilesApi.Delete(DeleteAgentProfileRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.Delete(url, request.ETag);
+                return true;
+            }
+            catch (PreConditionFailedException)
+            {
+                return false;
+            }
         }
 
-        Task<List<string>> IAgentProfilesApi.GetMany(GetAgentProfilesRequest request)
+        async Task<List<string>> IAgentProfilesApi.GetMany(GetAgentProfilesRequest request)
         {
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+
+            return await this._client.GetJson<List<string>>(url);
+        }
+
+        #endregion
+
+        #region Utils
+
+        private string BuildUrl(ASingleAgentProfileRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
+            var builder = new StringBuilder(ENDPOINT);
+            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
+            builder.AppendFormat("&profileId={0}", Uri.EscapeDataString(request.ProfileId));
+
+            return builder.ToString();
+        }
+
+        private string BuildUrl(GetAgentProfilesRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
+            var builder = new StringBuilder(ENDPOINT);
+            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
+            if (request.Since.HasValue)
+            {
+                builder.AppendFormat("&since={0}", Uri.EscapeDataString(request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")));
+            }
+
+            return builder.ToString();
         }
 
         #endregion

@@ -1,12 +1,24 @@
-﻿using System;
+﻿using xAPI.Client.Resources;
 
 namespace xAPI.Client.Requests
 {
-    public class DeleteAgentProfileRequest : ARequest
+    public class DeleteAgentProfileRequest : ASingleAgentProfileRequest
     {
-        internal override void Validate()
+        public string ETag { get; private set; }
+
+        public static DeleteAgentProfileRequest Create()
         {
-            throw new NotImplementedException();
+            return new DeleteAgentProfileRequest(etag: null);
+        }
+
+        public static DeleteAgentProfileRequest Create<T>(AgentProfileDocument<T> existingAgentProfile)
+        {
+            return new DeleteAgentProfileRequest(existingAgentProfile?.ETag);
+        }
+
+        internal DeleteAgentProfileRequest(string etag)
+        {
+            this.ETag = etag;
         }
     }
 }

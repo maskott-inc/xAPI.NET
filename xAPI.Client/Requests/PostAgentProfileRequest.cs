@@ -11,15 +11,23 @@ namespace xAPI.Client.Requests
         }
     }
 
-    public class PostAgentProfileRequest<T> : ARequest
+    public class PostAgentProfileRequest<T> : ASingleAgentProfileRequest
     {
+        public AgentProfileDocument<T> AgentProfile { get; private set; }
+
         internal PostAgentProfileRequest(AgentProfileDocument<T> agentProfile)
         {
+            this.AgentProfile = agentProfile;
         }
 
         internal override void Validate()
         {
-            throw new NotImplementedException();
+            base.Validate();
+
+            if (this.AgentProfile == null)
+            {
+                throw new ArgumentNullException(nameof(this.AgentProfile));
+            }
         }
     }
 }
