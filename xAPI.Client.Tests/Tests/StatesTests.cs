@@ -159,6 +159,74 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
+        public async Task can_put_existing_state()
+        {
+            // Arrange
+            var state = new StateDocument<string>()
+            {
+                Content = "foo",
+                ETag = ETAG
+            };
+            var request = PutStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
+            this._mockHttp
+                .When(HttpMethod.Put, this.GetApiUrl("activities/state"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("stateId", STATE_ID)
+                .WithHeaders("If-Match", ETAG)
+                .Respond(HttpStatusCode.NoContent);
+
+            // Act
+            bool result = await this._client.States.Put(request);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task cannot_put_existing_state_if_invalid_etag()
+        {
+            // Arrange
+            var state = new StateDocument<string>()
+            {
+                Content = "foo",
+                ETag = ETAG
+            };
+            var request = PutStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
+            this._mockHttp
+                .When(HttpMethod.Put, this.GetApiUrl("activities/state"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("stateId", STATE_ID)
+                .WithHeaders("If-Match", ETAG)
+                .Respond(HttpStatusCode.PreconditionFailed);
+
+            // Act
+            bool result = await this._client.States.Put(request);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Test]
         public async Task can_post_new_state()
         {
             // Arrange
@@ -186,6 +254,106 @@ namespace xAPI.Client.Tests
 
             // Act
             bool result = await this._client.States.Post(request);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task can_post_existing_state()
+        {
+            // Arrange
+            var state = new StateDocument<string>()
+            {
+                Content = "foo",
+                ETag = ETAG
+            };
+            var request = PostStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
+            this._mockHttp
+                .When(HttpMethod.Post, this.GetApiUrl("activities/state"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("stateId", STATE_ID)
+                .WithHeaders("If-Match", ETAG)
+                .Respond(HttpStatusCode.NoContent);
+
+            // Act
+            bool result = await this._client.States.Post(request);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task cannot_post_existing_state_if_invalid_etag()
+        {
+            // Arrange
+            var state = new StateDocument<string>()
+            {
+                Content = "foo",
+                ETag = ETAG
+            };
+            var request = PostStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
+            this._mockHttp
+                .When(HttpMethod.Post, this.GetApiUrl("activities/state"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("stateId", STATE_ID)
+                .WithHeaders("If-Match", ETAG)
+                .Respond(HttpStatusCode.PreconditionFailed);
+
+            // Act
+            bool result = await this._client.States.Post(request);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task can_delete_existing_state()
+        {
+            // Arrange
+            var state = new StateDocument<string>()
+            {
+                Content = "foo"
+            };
+            var request = DeleteStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
+            this._mockHttp
+                .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("stateId", STATE_ID)
+                .Respond(HttpStatusCode.NoContent);
+
+            // Act
+            bool result = await this._client.States.Delete(request);
 
             // Assert
             result.Should().BeTrue();
@@ -223,6 +391,40 @@ namespace xAPI.Client.Tests
 
             // Assert
             result.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task cannot_delete_existing_state_with_invalid_etag()
+        {
+            // Arrange
+            var state = new StateDocument<string>()
+            {
+                Content = "foo",
+                ETag = ETAG
+            };
+            var request = DeleteStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
+            this._mockHttp
+                .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("stateId", STATE_ID)
+                .WithHeaders("If-Match", ETAG)
+                .Respond(HttpStatusCode.PreconditionFailed);
+
+            // Act
+            bool result = await this._client.States.Delete(request);
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         [Test]
