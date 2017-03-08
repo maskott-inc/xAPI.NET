@@ -10,9 +10,9 @@ namespace xAPI.Client.Endpoints
         Task<StateDocument> Get(GetStateRequest request);
         Task<StateDocument<T>> Get<T>(GetStateRequest request);
 
-        Task Put<T>(PutStateRequest request, StateDocument<T> state);
+        Task Put<T>(PutStateRequest<T> request);
 
-        Task Post<T>(PostStateRequest request, StateDocument<T> state);
+        Task Post<T>(PostStateRequest<T> request);
 
         Task Delete(DeleteStateRequest request);
 

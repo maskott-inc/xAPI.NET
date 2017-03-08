@@ -34,12 +34,12 @@ namespace xAPI.Client.Endpoints.Impl
             return document;
         }
 
-        Task IStatesApi.Put<T>(PutStateRequest request, StateDocument<T> state)
+        Task IStatesApi.Put<T>(PutStateRequest<T> request)
         {
             throw new NotImplementedException();
         }
 
-        Task IStatesApi.Post<T>(PostStateRequest request, StateDocument<T> state)
+        Task IStatesApi.Post<T>(PostStateRequest<T> request)
         {
             throw new NotImplementedException();
         }

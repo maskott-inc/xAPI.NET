@@ -23,12 +23,12 @@ namespace xAPI.Client.Endpoints.Impl
             throw new NotImplementedException();
         }
 
-        Task IActivityProfilesApi.Put(PutActivityProfileRequest request, ActivityProfileDocument activityProfile)
+        Task IActivityProfilesApi.Put<T>(PutActivityProfileRequest<T> request)
         {
             throw new NotImplementedException();
         }
 
-        Task IActivityProfilesApi.Post(PostActivityProfileRequest request, ActivityProfileDocument activityProfile)
+        Task IActivityProfilesApi.Post<T>(PostActivityProfileRequest<T> request)
         {
             throw new NotImplementedException();
         }

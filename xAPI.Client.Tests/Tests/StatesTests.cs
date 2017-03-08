@@ -129,21 +129,19 @@ namespace xAPI.Client.Tests
         public void can_put_state()
         {
             // Arrange
-            var request = new PutStateRequest()
-            {
-                ActivityId = new Uri(ACTIVITY_ID),
-                Agent = new Agent()
-                {
-                    Name = AGENT_NAME,
-                    MBox = new Uri(AGENT_MBOX)
-                },
-                Registration = REGISTRATION,
-                StateId = STATE_ID
-            };
             var state = new StateDocument<string>()
             {
                 Content = "foo"
             };
+            var request = PutStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
@@ -154,7 +152,7 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.NoContent);
 
             // Act
-            Func<Task> action = async () => await this._client.States.Put(request, state);
+            Func<Task> action = async () => await this._client.States.Put(request);
 
             // Assert
             action.ShouldNotThrow();
@@ -164,21 +162,19 @@ namespace xAPI.Client.Tests
         public void can_post_state()
         {
             // Arrange
-            var request = new PostStateRequest()
-            {
-                ActivityId = new Uri(ACTIVITY_ID),
-                Agent = new Agent()
-                {
-                    Name = AGENT_NAME,
-                    MBox = new Uri(AGENT_MBOX)
-                },
-                Registration = REGISTRATION,
-                StateId = STATE_ID
-            };
             var state = new StateDocument<string>()
             {
                 Content = "foo"
             };
+            var request = PostStateRequest.Create(state);
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            request.Registration = REGISTRATION;
+            request.StateId = STATE_ID;
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
@@ -189,7 +185,7 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.NoContent);
 
             // Act
-            Func<Task> action = async () => await this._client.States.Post(request, state);
+            Func<Task> action = async () => await this._client.States.Post(request);
 
             // Assert
             action.ShouldNotThrow();
@@ -199,17 +195,14 @@ namespace xAPI.Client.Tests
         public void can_delete_state()
         {
             // Arrange
-            var request = new DeleteStateRequest()
+            var request = DeleteStateRequest.Create();
+            request.ActivityId = new Uri(ACTIVITY_ID);
+            request.Agent = new Agent()
             {
-                ActivityId = new Uri(ACTIVITY_ID),
-                Agent = new Agent()
-                {
-                    Name = AGENT_NAME,
-                    MBox = new Uri(AGENT_MBOX)
-                },
-                Registration = REGISTRATION,
-                StateId = STATE_ID
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
             };
+            request.Registration = REGISTRATION;
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
