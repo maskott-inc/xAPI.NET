@@ -43,7 +43,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public void cannot_get_agent_definition_if_unauthorized()
+        public void cannot_get_agent_definition_when_unauthorized()
         {
             // Arrange
             GetAgentRequest request = new GetAgentRequest()

@@ -83,7 +83,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public void cannot_get_activity_if_unauthorized()
+        public void cannot_get_activity_when_unauthorized()
         {
             // Arrange
             var request = new GetActivityRequest()

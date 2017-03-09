@@ -83,7 +83,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public void cannot_get_agent_profile_if_unauthorized()
+        public void cannot_get_agent_profile_when_unauthorized()
         {
             // Arrange
             var request = new GetAgentProfileRequest()
@@ -171,7 +171,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task cannot_put_existing_agent_profile_if_invalid_etag()
+        public async Task cannot_put_existing_agent_profile_when_etag_is_invalid()
         {
             // Arrange
             var state = new AgentProfileDocument<string>()
@@ -260,7 +260,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task cannot_post_existing_agent_profile_if_invalid_etag()
+        public async Task cannot_post_existing_agent_profile_when_etag_is_invalid()
         {
             // Arrange
             var state = new AgentProfileDocument<string>()

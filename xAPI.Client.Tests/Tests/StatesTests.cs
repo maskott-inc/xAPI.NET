@@ -93,7 +93,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public void cannot_get_state_if_unauthorized()
+        public void cannot_get_state_when_unauthorized()
         {
             // Arrange
             var request = new GetStateRequest()
@@ -193,7 +193,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task cannot_put_existing_state_if_invalid_etag()
+        public async Task cannot_put_existing_state_when_etag_is_invalid()
         {
             // Arrange
             var state = new StateDocument<string>()
@@ -294,7 +294,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task cannot_post_existing_state_if_invalid_etag()
+        public async Task cannot_post_existing_state_when_etag_is_invalid()
         {
             // Arrange
             var state = new StateDocument<string>()

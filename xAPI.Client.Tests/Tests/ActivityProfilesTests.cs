@@ -74,7 +74,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public void cannot_get_activity_profile_if_unauthorized()
+        public void cannot_get_activity_profile_when_unauthorized()
         {
             // Arrange
             var request = new GetActivityProfileRequest()
@@ -150,7 +150,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task cannot_put_existing_activity_profile_if_invalid_etag()
+        public async Task cannot_put_existing_activity_profile_when_etag_is_invalid()
         {
             // Arrange
             var state = new ActivityProfileDocument<string>()
@@ -227,7 +227,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task cannot_post_existing_activity_profile_if_invalid_etag()
+        public async Task cannot_post_existing_activity_profile_when_etag_is_invalid()
         {
             // Arrange
             var state = new ActivityProfileDocument<string>()
