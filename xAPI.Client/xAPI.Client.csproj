@@ -94,7 +94,7 @@
     <Compile Include="Resources\ActivityDefinition.cs" />
     <Compile Include="Resources\Interaction.cs" />
     <Compile Include="Resources\LanguageMap.cs" />
-    <Compile Include="Resources\ObjectResource.cs" />
+    <Compile Include="Resources\IObjectResource.cs" />
     <Compile Include="XApiClient.cs" />
     <Compile Include="Endpoints\Impl\StatementsApi.cs" />
     <Compile Include="Endpoints\IStatesApi.cs" />

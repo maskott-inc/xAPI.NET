@@ -11,7 +11,7 @@ namespace xAPI.Client.Json
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(ObjectResource).IsAssignableFrom(objectType);
+            return typeof(IObjectResource).IsAssignableFrom(objectType);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -24,7 +24,7 @@ namespace xAPI.Client.Json
             {
                 JObject obj = JObject.Load(reader);
                 string jsonObjectType = (string)obj["objectType"];
-                ObjectResource target = this.CreateEmptyObject(objectType, jsonObjectType);
+                IObjectResource target = this.CreateEmptyObject(objectType, jsonObjectType);
                 serializer.Populate(obj.CreateReader(), target);
                 return target;
             }
@@ -39,11 +39,11 @@ namespace xAPI.Client.Json
             throw new NotImplementedException();
         }
 
-        private ObjectResource CreateEmptyObject(Type objectType, string jsonObjectType)
+        private IObjectResource CreateEmptyObject(Type objectType, string jsonObjectType)
         {
             if (!objectType.IsAbstract)
             {
-                return (ObjectResource)Activator.CreateInstance(objectType);
+                return (IObjectResource)Activator.CreateInstance(objectType);
             }
             else
             {

@@ -15,6 +15,7 @@ namespace xAPI.Client.Tests
     {
         private const string AGENT_NAME = "foo";
         private const string AGENT_MBOX = "mailto:test@example.org";
+        private static readonly string AGENT_QS = $"{{\"objectType\":\"Agent\",\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\"}}";
 
         [Test]
         public async Task can_get_agent_definition()
@@ -30,7 +31,7 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("agents/get.json"));
 
             // Act
@@ -56,7 +57,7 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .Respond(HttpStatusCode.Forbidden);
 
             // Act

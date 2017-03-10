@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace xAPI.Client.Resources
 {
-    public class Person : ObjectResource
+    public class Person : IObjectResource
     {
         [JsonProperty("name")]
         public List<string> Name { get; set; }
@@ -21,6 +21,7 @@ namespace xAPI.Client.Resources
         [JsonProperty("account", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public List<AccountObject> Account { get; set; }
 
-        protected override string GetObjectType() { return "Person"; }
+        public string ObjectType => "Person";
+
     }
 }

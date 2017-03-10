@@ -3,7 +3,7 @@ using System;
 
 namespace xAPI.Client.Resources
 {
-    public class Activity : ObjectResource
+    public class Activity : IObjectResource
     {
         [JsonProperty("id")]
         public Uri Id { get; set; }
@@ -11,6 +11,6 @@ namespace xAPI.Client.Resources
         [JsonProperty("definition")]
         public ActivityDefinition Definition { get; set; }
 
-        protected override string GetObjectType() { return "Activity"; }
+        public string ObjectType => "Activity";
     }
 }

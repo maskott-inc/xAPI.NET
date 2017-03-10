@@ -22,6 +22,7 @@ namespace xAPI.Client.Tests
         private static readonly DateTimeOffset SINCE = DateTimeOffset.UtcNow.AddDays(-1);
         private static readonly DateTimeOffset LAST_MODIFIED = DateTimeOffset.UtcNow;
         private const string ETAG = "\"123456789\"";
+        private static readonly string AGENT_QS = $"{{\"objectType\":\"Agent\",\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\"}}";
 
         [Test]
         public async Task can_get_agent_profile_with_dynamic_document()
@@ -38,7 +39,7 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .Respond(this.GetAgentProfileResponseMessage());
 
@@ -68,7 +69,7 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .Respond(this.GetAgentProfileResponseMessage());
 
@@ -97,7 +98,7 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .Respond(HttpStatusCode.Forbidden);
 
@@ -128,7 +129,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-None-Match", "*")
                 .Respond(HttpStatusCode.NoContent);
@@ -158,7 +159,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-Match", ETAG)
                 .Respond(HttpStatusCode.NoContent);
@@ -188,7 +189,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-Match", ETAG)
                 .Respond(HttpStatusCode.PreconditionFailed);
@@ -217,7 +218,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-None-Match", "*")
                 .Respond(HttpStatusCode.NoContent);
@@ -247,7 +248,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-Match", ETAG)
                 .Respond(HttpStatusCode.NoContent);
@@ -277,7 +278,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-Match", ETAG)
                 .Respond(HttpStatusCode.PreconditionFailed);
@@ -306,7 +307,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .Respond(HttpStatusCode.NoContent);
 
@@ -335,7 +336,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-Match", ETAG)
                 .Respond(HttpStatusCode.NoContent);
@@ -365,7 +366,7 @@ namespace xAPI.Client.Tests
             request.ProfileId = PROFILE_ID;
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
                 .WithHeaders("If-Match", ETAG)
                 .Respond(HttpStatusCode.PreconditionFailed);
@@ -392,7 +393,7 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents/profile"))
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("since", SINCE.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("agents/profile/get_many.json"));
 

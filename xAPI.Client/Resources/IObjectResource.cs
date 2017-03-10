@@ -4,11 +4,9 @@ using xAPI.Client.Json;
 namespace xAPI.Client.Resources
 {
     [JsonConverter(typeof(ObjectResourceConverter))]
-    public abstract class ObjectResource
+    public interface IObjectResource
     {
         [JsonProperty("objectType")]
-        public string ObjectType { get { return this.GetObjectType(); } }
-
-        protected abstract string GetObjectType();
+        string ObjectType { get; }
     }
 }

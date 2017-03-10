@@ -3,8 +3,10 @@ using System;
 
 namespace xAPI.Client.Resources
 {
-    public class Agent : ObjectResource
+    public class Agent : IObjectResource
     {
+        public string ObjectType => "Agent";
+
         [JsonProperty("name")]
         public string Name { get; set; }
 
@@ -19,7 +21,5 @@ namespace xAPI.Client.Resources
 
         [JsonProperty("account", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public AccountObject Account { get; set; }
-
-        protected override string GetObjectType() { return "Agent"; }
     }
 }

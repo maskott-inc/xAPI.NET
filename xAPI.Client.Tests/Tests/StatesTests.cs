@@ -24,6 +24,7 @@ namespace xAPI.Client.Tests
         private static readonly DateTimeOffset SINCE = DateTimeOffset.UtcNow.AddDays(-1);
         private static readonly DateTimeOffset LAST_MODIFIED = DateTimeOffset.UtcNow;
         private const string ETAG = "\"123456789\"";
+        private static readonly string AGENT_QS = $"{{\"objectType\":\"Agent\",\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\"}}";
 
         [Test]
         public async Task can_get_state_with_dynamic_document()
@@ -43,7 +44,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .Respond(this.GetStateResponseMessage());
@@ -77,7 +78,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .Respond(this.GetStateResponseMessage());
@@ -110,7 +111,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .Respond(HttpStatusCode.Forbidden);
@@ -145,7 +146,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-None-Match", "*")
@@ -179,7 +180,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-Match", ETAG)
@@ -213,7 +214,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Put, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-Match", ETAG)
@@ -246,7 +247,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-None-Match", "*")
@@ -280,7 +281,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-Match", ETAG)
@@ -314,7 +315,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-Match", ETAG)
@@ -347,7 +348,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .Respond(HttpStatusCode.NoContent);
@@ -380,7 +381,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-Match", ETAG)
@@ -414,7 +415,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
                 .WithHeaders("If-Match", ETAG)
@@ -445,7 +446,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("since", SINCE.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/state/get_many.json"));
@@ -474,7 +475,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/state"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .WithQueryString("agent", $"{{\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\",\"objectType\":\"Agent\"}}")
+                .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .Respond(HttpStatusCode.NoContent);
 
