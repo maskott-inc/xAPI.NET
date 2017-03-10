@@ -36,6 +36,6 @@
         }
       }
     ],
-    "extensions": "some data"
+    "extensions": { "http://www.example.org/extension": { "foo":  "bar" } }
   }
 }

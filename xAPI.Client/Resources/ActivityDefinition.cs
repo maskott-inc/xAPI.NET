@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace xAPI.Client.Resources
 {
-    public class ActivityDefinition<T>
+    public class ActivityDefinition
     {
         [JsonProperty("name")]
         public LanguageMap Name { get; set; }
@@ -40,6 +40,6 @@ namespace xAPI.Client.Resources
         public List<Interaction> Steps { get; set; }
 
         [JsonProperty("extensions")]
-        public T Extensions { get; set; }
+        public Dictionary<Uri, dynamic> Extensions { get; set; }
     }
 }

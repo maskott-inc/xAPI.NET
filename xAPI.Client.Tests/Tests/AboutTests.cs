@@ -17,7 +17,7 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task can_get_about_resource_with_dynamic_extensions()
+        public async Task can_get_about_resource()
         {
             // Arrange
             this._mockHttp
@@ -30,22 +30,7 @@ namespace xAPI.Client.Tests
             // Assert
             about.Should().NotBeNull();
             about.Versions.Should().HaveCount(x => x > 0);
-        }
-
-        [Test]
-        public async Task can_get_about_resource_with_object_extensions()
-        {
-            // Arrange
-            this._mockHttp
-                .When(HttpMethod.Get, this.GetApiUrl("about"))
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("about/get.json"));
-
-            // Act
-            About<object> about = await this._client.About.Get<object>();
-
-            // Assert
-            about.Should().NotBeNull();
-            about.Versions.Should().HaveCount(x => x > 0);
+            about.Extensions.Should().NotBeNull().And.NotBeEmpty();
         }
     }
 }

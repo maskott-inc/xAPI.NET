@@ -20,11 +20,6 @@ namespace xAPI.Client.Endpoints.Impl
             return await this._client.GetJson<About>(ENDPOINT);
         }
 
-        async Task<About<T>> IAboutApi.Get<T>()
-        {
-            return await this._client.GetJson<About<T>>(ENDPOINT);
-        }
-
         #endregion
     }
 }

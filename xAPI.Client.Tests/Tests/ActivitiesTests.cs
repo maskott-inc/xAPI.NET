@@ -35,31 +35,7 @@ namespace xAPI.Client.Tests
             activity.Should().NotBeNull();
             activity.Id.Should().Be(request.ActivityId);
             activity.Definition.Should().NotBeNull();
-            string extensions = activity.Definition.Extensions;
-            extensions.Should().NotBeNullOrEmpty();
-        }
-
-        [Test]
-        public async Task can_get_activity_with_strongly_typed_extensions()
-        {
-            // Arrange
-            var request = new GetActivityRequest()
-            {
-                ActivityId = new Uri(ACTIVITY_ID)
-            };
-            this._mockHttp
-                .When(HttpMethod.Get, this.GetApiUrl("activities"))
-                .WithQueryString("activityId", ACTIVITY_ID)
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/get.json"));
-
-            // Act
-            Activity<string> activity = await this._client.Activities.Get<string>(request);
-
-            // Assert
-            activity.Should().NotBeNull();
-            activity.Id.Should().Be(request.ActivityId);
-            activity.Definition.Should().NotBeNull();
-            activity.Definition.Extensions.Should().NotBeNullOrEmpty();
+            activity.Definition.Extensions.Should().NotBeNull().And.NotBeEmpty();
         }
 
         [Test]
