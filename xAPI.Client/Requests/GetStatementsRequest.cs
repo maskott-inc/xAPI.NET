@@ -2,10 +2,14 @@
 
 namespace xAPI.Client.Requests
 {
-    public class GetStatementsRequest : ARequest
+    public class GetStatementsRequest : AGetStatementRequest
     {
+        //TODO
+
         internal override void Validate()
         {
+            base.Validate();
+
             throw new NotImplementedException();
         }
     }

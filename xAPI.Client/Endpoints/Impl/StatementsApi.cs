@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
-using xAPI.Client.Results;
 
 namespace xAPI.Client.Endpoints.Impl
 {
@@ -19,22 +17,32 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IStatementsApi members
 
-        Task IStatementsApi.Put(Statement statement)
+        Task<Statement> IStatementsApi.Get(GetStatementRequest request)
         {
             throw new NotImplementedException();
         }
 
-        Task IStatementsApi.Post(Statement statement)
+        Task<bool> IStatementsApi.Put(PutStatementRequest request)
         {
             throw new NotImplementedException();
         }
 
-        Task<StatementsResult> IStatementsApi.GetMany(GetStatementsRequest request, string continuationToken)
+        Task<bool> IStatementsApi.Post(PostStatementRequest request)
         {
             throw new NotImplementedException();
         }
 
-        Task IStatementsApi.PostMany(IReadOnlyList<Statement> statements)
+        Task<StatementResult> IStatementsApi.GetMany(GetStatementsRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<StatementResult> IStatementsApi.GetMore(Uri more)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
         {
             throw new NotImplementedException();
         }
