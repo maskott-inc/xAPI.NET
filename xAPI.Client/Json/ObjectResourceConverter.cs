@@ -41,28 +41,21 @@ namespace xAPI.Client.Json
 
         private IObjectResource CreateEmptyObject(Type objectType, string jsonObjectType)
         {
-            if (!objectType.IsAbstract)
+            if (jsonObjectType == "Agent")
             {
-                return (IObjectResource)Activator.CreateInstance(objectType);
+                return new Agent();
+            }
+            else if (jsonObjectType == "Person")
+            {
+                return new Person();
+            }
+            else if (jsonObjectType == "Activity" || jsonObjectType == null)
+            {
+                return new Activity();
             }
             else
             {
-                if (jsonObjectType == "Agent")
-                {
-                    return new Agent();
-                }
-                else if (jsonObjectType == "Person")
-                {
-                    return new Person();
-                }
-                else if (jsonObjectType == "Activity" || jsonObjectType == null)
-                {
-                    return new Activity();
-                }
-                else
-                {
-                    throw new JsonSerializationException($"Error when parsing ObjectResource. Invalid objectType detected: {jsonObjectType}.");
-                }
+                throw new JsonSerializationException($"Error when parsing ObjectResource. Invalid objectType detected: {jsonObjectType}.");
             }
         }
     }
