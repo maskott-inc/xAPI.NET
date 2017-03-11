@@ -25,19 +25,19 @@ namespace xAPI.Client.Resources
         public List<string> CorrectResponsesPattern { get; set; }
 
         [JsonProperty("choices", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public List<Interaction> Choices { get; set; }
+        public List<InteractionComponent> Choices { get; set; }
 
         [JsonProperty("scale", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public List<Interaction> Scale { get; set; }
+        public List<InteractionComponent> Scale { get; set; }
 
         [JsonProperty("source", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public List<Interaction> Source { get; set; }
+        public List<InteractionComponent> Source { get; set; }
 
         [JsonProperty("target", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public List<Interaction> Target { get; set; }
+        public List<InteractionComponent> Target { get; set; }
 
         [JsonProperty("steps", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public List<Interaction> Steps { get; set; }
+        public List<InteractionComponent> Steps { get; set; }
 
         [JsonProperty("extensions")]
         public Extensions Extensions { get; set; }

@@ -99,7 +99,7 @@
     <Compile Include="Resources\Agent.cs" />
     <Compile Include="Resources\AccountObject.cs" />
     <Compile Include="Resources\ActivityDefinition.cs" />
-    <Compile Include="Resources\Interaction.cs" />
+    <Compile Include="Resources\InteractionComponent.cs" />
     <Compile Include="Resources\LanguageMap.cs" />
     <Compile Include="Resources\IObjectResource.cs" />
     <Compile Include="XApiClient.cs" />

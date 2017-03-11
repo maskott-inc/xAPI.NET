@@ -2,7 +2,7 @@
 
 namespace xAPI.Client.Resources
 {
-    public class Interaction
+    public class InteractionComponent
     {
         [JsonProperty("id")]
         public string Id { get; set; }
