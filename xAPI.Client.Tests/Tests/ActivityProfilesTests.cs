@@ -44,7 +44,7 @@ namespace xAPI.Client.Tests
             activityProfile.Should().NotBeNull();
             activityProfile.ETag.Should().Be(ETAG);
             activityProfile.LastModified.Should().Be(LAST_MODIFIED);
-            string content = activityProfile.Content;
+            string content = activityProfile.Content.ToObject<string>();
             content.Should().NotBeNullOrEmpty();
         }
 

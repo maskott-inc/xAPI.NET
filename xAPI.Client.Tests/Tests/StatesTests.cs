@@ -56,7 +56,7 @@ namespace xAPI.Client.Tests
             state.Should().NotBeNull();
             state.ETag.Should().Be(ETAG);
             state.LastModified.Should().Be(LAST_MODIFIED);
-            string content = state.Content;
+            string content = state.Content.ToObject<string>();
             content.Should().NotBeNullOrEmpty();
         }
 

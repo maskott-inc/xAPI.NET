@@ -50,7 +50,7 @@ namespace xAPI.Client.Tests
             agentProfile.Should().NotBeNull();
             agentProfile.ETag.Should().Be(ETAG);
             agentProfile.LastModified.Should().Be(LAST_MODIFIED);
-            string content = agentProfile.Content;
+            string content = agentProfile.Content.ToObject<string>();
             content.Should().NotBeNullOrEmpty();
         }
 

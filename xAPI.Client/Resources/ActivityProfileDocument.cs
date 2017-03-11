@@ -1,6 +1,8 @@
-﻿namespace xAPI.Client.Resources
+﻿using Newtonsoft.Json.Linq;
+
+namespace xAPI.Client.Resources
 {
-    public class ActivityProfileDocument : ActivityProfileDocument<dynamic>
+    public class ActivityProfileDocument : ActivityProfileDocument<JToken>
     {
     }
 
