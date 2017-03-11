@@ -49,6 +49,18 @@ namespace xAPI.Client.Json
             {
                 return new Person();
             }
+            else if (jsonObjectType == "Group")
+            {
+                return new Group();
+            }
+            else if (jsonObjectType == "StatementRef")
+            {
+                return new StatementRef();
+            }
+            else if (jsonObjectType == "SubStatement")
+            {
+                return new SubStatement();
+            }
             else if (jsonObjectType == "Activity" || jsonObjectType == null)
             {
                 return new Activity();

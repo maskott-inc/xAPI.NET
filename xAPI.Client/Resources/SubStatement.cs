@@ -4,11 +4,8 @@ using System.Collections.Generic;
 
 namespace xAPI.Client.Resources
 {
-    public class Statement
+    public class SubStatement : IStatementTarget
     {
-        [JsonProperty("id")]
-        public Guid? Id { get; set; }
-
         [JsonProperty("actor")]
         public Actor Actor { get; set; }
 
@@ -16,7 +13,7 @@ namespace xAPI.Client.Resources
         public Verb Verb { get; set; }
 
         [JsonProperty("object")]
-        public IStatementTarget Object { get; set; }
+        public ISubStatementTarget Object { get; set; }
 
         [JsonProperty("result", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public Result Result { get; set; }
@@ -27,16 +24,9 @@ namespace xAPI.Client.Resources
         [JsonProperty("timestamp", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public DateTimeOffset? Timestamp { get; set; }
 
-        [JsonProperty("stored", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public DateTimeOffset Stored { get; set; }
-
-        [JsonProperty("authority", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public Actor Authority { get; set; }
-
-        [JsonProperty("version", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public XApiVersion Version { get; set; }
-
         [JsonProperty("attachments", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public List<Attachment> Attachments { get; set; }
+
+        public string ObjectType => "SubStatement";
     }
 }
