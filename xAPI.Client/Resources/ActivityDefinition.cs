@@ -40,6 +40,6 @@ namespace xAPI.Client.Resources
         public List<Interaction> Steps { get; set; }
 
         [JsonProperty("extensions")]
-        public Dictionary<Uri, dynamic> Extensions { get; set; }
+        public Extensions Extensions { get; set; }
     }
 }

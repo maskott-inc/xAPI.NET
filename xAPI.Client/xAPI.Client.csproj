@@ -74,6 +74,7 @@
     <Compile Include="Requests\PostStatementsRequest.cs" />
     <Compile Include="Requests\PostStatementRequest.cs" />
     <Compile Include="Requests\PutStatementRequest.cs" />
+    <Compile Include="Resources\Extensions.cs" />
     <Compile Include="Resources\BaseDocument.cs" />
     <Compile Include="Resources\XApiVersion.cs" />
     <Compile Include="Configuration\AnonymousEndpointConfiguration.cs" />
