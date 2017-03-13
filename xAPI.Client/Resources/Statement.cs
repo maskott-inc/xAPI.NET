@@ -8,7 +8,7 @@ namespace xAPI.Client.Resources
     public class Statement
     {
         [JsonProperty("id")]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         [JsonProperty("actor")]
         [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
@@ -42,5 +42,10 @@ namespace xAPI.Client.Resources
 
         [JsonProperty("attachments", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public List<Attachment> Attachments { get; set; }
+
+        public Statement()
+        {
+            this.Id = Guid.NewGuid();
+        }
     }
 }
