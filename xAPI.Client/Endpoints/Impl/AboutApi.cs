@@ -17,7 +17,7 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<About> IAboutApi.Get()
         {
-            return await this._client.GetJson<About>(ENDPOINT);
+            return await this._client.GetJson<About>(ENDPOINT, new GetJsonOptions());
         }
 
         #endregion

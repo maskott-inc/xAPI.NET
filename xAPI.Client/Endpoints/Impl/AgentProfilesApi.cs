@@ -25,7 +25,7 @@ namespace xAPI.Client.Endpoints.Impl
         {
             string url = this.BuildUrl(request);
             var document = new AgentProfileDocument();
-            await this._client.GetDocumentAsJson(url, document);
+            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
             return document;
         }
 
@@ -33,7 +33,7 @@ namespace xAPI.Client.Endpoints.Impl
         {
             string url = this.BuildUrl(request);
             var document = Activator.CreateInstance<AgentProfileDocument<T>>();
-            await this._client.GetDocumentAsJson(url, document);
+            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
             return document;
         }
 
@@ -43,7 +43,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PutDocumentAsJson(url, request.AgentProfile);
+                await this._client.PutJsonDocument(url, new PutJsonDocumentOptions(), request.AgentProfile);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -58,7 +58,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PostDocumentAsJson(url, request.AgentProfile);
+                await this._client.PostJsonDocument(url, new PostJsonDocumentOptions(), request.AgentProfile);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -73,7 +73,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.Delete(url, request.ETag);
+                await this._client.Delete(url, new DeleteOptions() { ETag = request.ETag });
                 return true;
             }
             catch (PreConditionFailedException)
@@ -86,7 +86,7 @@ namespace xAPI.Client.Endpoints.Impl
         {
             string url = this.BuildUrl(request);
 
-            return await this._client.GetJson<List<string>>(url);
+            return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
         }
 
         #endregion

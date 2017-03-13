@@ -28,7 +28,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             string agentStr = JsonConvert.SerializeObject(request.Agent);
             string url = string.Format("{0}?agent={1}", ENDPOINT, Uri.EscapeDataString(agentStr));
-            return await this._client.GetJson<Person>(url);
+            return await this._client.GetJson<Person>(url, new GetJsonOptions());
         }
 
         #endregion

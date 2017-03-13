@@ -29,7 +29,7 @@ namespace xAPI.Client.Endpoints.Impl
             string url = string.Format("{0}?activityId={1}", ENDPOINT, Uri.EscapeDataString(request.ActivityId.ToString()));
             try
             {
-                return await this._client.GetJson<Activity>(url);
+                return await this._client.GetJson<Activity>(url, new GetJsonOptions());
             }
             catch (NotFoundException)
             {

@@ -25,7 +25,7 @@ namespace xAPI.Client.Endpoints.Impl
         {
             string url = this.BuildUrl(request);
             var document = new StateDocument();
-            await this._client.GetDocumentAsJson(url, document);
+            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
             return document;
         }
 
@@ -33,7 +33,7 @@ namespace xAPI.Client.Endpoints.Impl
         {
             string url = this.BuildUrl(request);
             var document = Activator.CreateInstance<StateDocument<T>>();
-            await this._client.GetDocumentAsJson(url, document);
+            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
             return document;
         }
 
@@ -43,7 +43,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PutDocumentAsJson(url, request.State);
+                await this._client.PutJsonDocument(url, new PutJsonDocumentOptions(), request.State);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -58,7 +58,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PostDocumentAsJson(url, request.State);
+                await this._client.PostJsonDocument(url, new PostJsonDocumentOptions(), request.State);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -73,7 +73,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.Delete(url, request.ETag);
+                await this._client.Delete(url, new DeleteOptions() { ETag = request.ETag });
                 return true;
             }
             catch (PreConditionFailedException)
@@ -86,14 +86,14 @@ namespace xAPI.Client.Endpoints.Impl
         {
             string url = this.BuildUrl(request);
 
-            return await this._client.GetJson<List<string>>(url);
+            return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
         }
 
         async Task IStatesApi.DeleteMany(DeleteStatesRequest request)
         {
             string url = this.BuildUrl(request);
 
-            await this._client.Delete(url, etag: null);
+            await this._client.Delete(url, new DeleteOptions());
         }
 
         #endregion
