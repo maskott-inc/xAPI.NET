@@ -14,8 +14,8 @@ namespace xAPI.Client.Tests
 {
     public class StatementsTests : BaseTest
     {
-        private static readonly Guid STATEMENT_ID = Guid.NewGuid();
-        private static readonly Guid STATEMENT_ID_2 = Guid.NewGuid();
+        private static readonly Guid STATEMENT_ID = new Guid("f5a6b27d-4f4e-4d62-812b-a6b1891bfe43");
+        private static readonly Guid STATEMENT_ID_2 = new Guid("b2aa659b-7ca4-46bf-90f6-c4c9c79b88e7");
         private const string ACTIVITY_ID = "http://www.example.org/activity";
         private const string AGENT_NAME = "foo";
         private const string AGENT_MBOX = "mailto:test@example.org";
@@ -33,6 +33,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
                 .WithQueryString("statementId", STATEMENT_ID.ToString())
+                .WithHeaders("Accept-Language", "*")
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get.json"));
 
             // Act
@@ -54,6 +55,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
                 .WithQueryString("statementId", STATEMENT_ID.ToString())
+                .WithHeaders("Accept-Language", "*")
                 .Respond(HttpStatusCode.Forbidden);
 
             // Act
@@ -76,8 +78,9 @@ namespace xAPI.Client.Tests
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
-                .WithQueryString("statementId", STATEMENT_ID.ToString())
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_voided.json"));
+                .WithQueryString("voidedStatementId", STATEMENT_ID.ToString())
+                .WithHeaders("Accept-Language", "*")
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get.json"));
 
             // Act
             Statement statement = await this._client.Statements.Get(request);
@@ -98,6 +101,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
                 .WithQueryString("activityId", ACTIVITY_ID)
+                .WithHeaders("Accept-Language", "*")
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
 
             // Act
@@ -184,6 +188,23 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
+        public async Task can_put_voiding_statement()
+        {
+            // Arrange
+            Statement statement = this.GetVoidingStatement(STATEMENT_ID, STATEMENT_ID_2);
+            var request = new PutStatementRequest(statement);
+            this._mockHttp
+                .When(HttpMethod.Put, this.GetApiUrl("statements"))
+                .WithQueryString("statementId", STATEMENT_ID.ToString())
+                .Respond(HttpStatusCode.NoContent);
+
+            // Act
+            bool result = await this._client.Statements.Put(request);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+        [Test]
         public async Task can_post_new_statement()
         {
             // Arrange
@@ -207,7 +228,7 @@ namespace xAPI.Client.Tests
             Statement statement = this.GetStatement(STATEMENT_ID);
             var request = new PostStatementRequest(statement);
             this._mockHttp
-                .When(HttpMethod.Put, this.GetApiUrl("statements"))
+                .When(HttpMethod.Post, this.GetApiUrl("statements"))
                 .Respond(HttpStatusCode.Conflict);
 
             // Act
@@ -224,7 +245,7 @@ namespace xAPI.Client.Tests
             Statement statement = this.GetStatement(STATEMENT_ID);
             var request = new PostStatementRequest(statement);
             this._mockHttp
-                .When(HttpMethod.Put, this.GetApiUrl("statements"))
+                .When(HttpMethod.Post, this.GetApiUrl("statements"))
                 .Respond(HttpStatusCode.Forbidden);
 
             // Act
@@ -235,6 +256,23 @@ namespace xAPI.Client.Tests
 
             // Assert
             action.ShouldThrow<ForbiddenException>();
+        }
+
+        [Test]
+        public async Task can_post_voiding_statement()
+        {
+            // Arrange
+            Statement statement = this.GetVoidingStatement(STATEMENT_ID, STATEMENT_ID_2);
+            var request = new PostStatementRequest(statement);
+            this._mockHttp
+                .When(HttpMethod.Post, this.GetApiUrl("statements"))
+                .Respond(HttpStatusCode.NoContent);
+
+            // Act
+            bool result = await this._client.Statements.Post(request);
+
+            // Assert
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -290,10 +328,20 @@ namespace xAPI.Client.Tests
                     Id = new Uri(ACTIVITY_ID),
                     Definition = new ActivityDefinition()
                     {
-
+                        //TODO
                     }
                 }
             };
+        }
+
+        private Statement GetVoidingStatement(Guid id, Guid voidedStatementId)
+        {
+            var agent = new Agent()
+            {
+                Name = AGENT_NAME,
+                MBox = new Uri(AGENT_MBOX)
+            };
+            return Statement.CreateVoidingStatement(id, agent, voidedStatementId);
         }
 
         private List<Statement> GetStatements()

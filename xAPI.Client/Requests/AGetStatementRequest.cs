@@ -12,7 +12,19 @@ namespace xAPI.Client.Requests
 
         public bool Attachments { get; set; }
 
-        public List<string> AcceptedLanguages { get; set; }
+        public List<string> AcceptedLanguages { private get; set; }
+
+        public List<string> GetAcceptedLanguages()
+        {
+            if (this.AcceptedLanguages == null || this.AcceptedLanguages.Count == 0)
+            {
+                return new List<string>() { "*" };
+            }
+            else
+            {
+                return this.AcceptedLanguages;
+            }
+        }
 
         internal override void Validate()
         {

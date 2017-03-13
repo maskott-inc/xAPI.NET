@@ -47,5 +47,23 @@ namespace xAPI.Client.Resources
         {
             this.Id = Guid.NewGuid();
         }
+
+        public static Statement CreateVoidingStatement(Guid id, Agent agent, Guid voidedStatementId)
+        {
+            return new Statement()
+            {
+                Id = id,
+                Actor = agent,
+                Verb = new Verb()
+                {
+                    Id = new Uri("http://adlnet.gov/expapi/verbs/voided"),
+                    Display = new LanguageMap() { { "en-US", "voided" } }
+                },
+                Object = new StatementRef()
+                {
+                    Id = voidedStatementId
+                }
+            };
+        }
     }
 }

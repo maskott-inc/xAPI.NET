@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
+using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -17,34 +19,85 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region IStatementsApi members
 
-        Task<Statement> IStatementsApi.Get(GetStatementRequest request)
+        async Task<Statement> IStatementsApi.Get(GetStatementRequest request)
+        {
+            string url = this.BuildUrl(request);
+            return await this._client.GetJson<Statement>(url, new GetJsonOptions() { AcceptedLanguages = request.GetAcceptedLanguages() });
+        }
+
+        async Task<bool> IStatementsApi.Put(PutStatementRequest request)
+        {
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PutJson(url, new PutJsonOptions() { }, request.Statement);
+                return true;
+            }
+            catch (ConflictException)
+            {
+                return false;
+            }
+        }
+
+        async Task<bool> IStatementsApi.Post(PostStatementRequest request)
+        {
+            string url = this.BuildUrl(request);
+
+            try
+            {
+                await this._client.PostJson(url, new PostJsonOptions() { }, request.Statement);
+                return true;
+            }
+            catch (ConflictException)
+            {
+                return false;
+            }
+        }
+
+        async Task<StatementResult> IStatementsApi.GetMany(GetStatementsRequest request)
         {
             throw new NotImplementedException();
         }
 
-        Task<bool> IStatementsApi.Put(PutStatementRequest request)
+        async Task<StatementResult> IStatementsApi.GetMore(Uri more)
         {
             throw new NotImplementedException();
         }
 
-        Task<bool> IStatementsApi.Post(PostStatementRequest request)
+        async Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
         {
             throw new NotImplementedException();
         }
 
-        Task<StatementResult> IStatementsApi.GetMany(GetStatementsRequest request)
+        #endregion
+
+        #region Utils
+
+        private string BuildUrl(GetStatementRequest request)
         {
-            throw new NotImplementedException();
+            var builder = new StringBuilder(ENDPOINT);
+            if (request.StatementId.HasValue)
+            {
+                builder.AppendFormat("?statementId={0}", Uri.EscapeDataString(request.StatementId.Value.ToString()));
+            }
+            else
+            {
+                builder.AppendFormat("?voidedStatementId={0}", Uri.EscapeDataString(request.VoidedStatementId.Value.ToString()));
+            }
+            return builder.ToString();
         }
 
-        Task<StatementResult> IStatementsApi.GetMore(Uri more)
+        private string BuildUrl(PutStatementRequest request)
         {
-            throw new NotImplementedException();
+            var builder = new StringBuilder(ENDPOINT);
+            builder.AppendFormat("?statementId={0}", Uri.EscapeDataString(request.Statement.Id.ToString()));
+            return builder.ToString();
         }
 
-        Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
+        private string BuildUrl(PostStatementRequest request)
         {
-            throw new NotImplementedException();
+            return ENDPOINT;
         }
 
         #endregion

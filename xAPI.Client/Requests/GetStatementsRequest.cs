@@ -28,8 +28,6 @@ namespace xAPI.Client.Requests
         internal override void Validate()
         {
             base.Validate();
-
-            throw new NotImplementedException();
         }
     }
 }

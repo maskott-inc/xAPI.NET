@@ -109,9 +109,6 @@
     <None Include="Data\statements\get_many.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\statements\get_voided.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Data\statements\get.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
