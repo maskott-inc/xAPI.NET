@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using xAPI.Client.Json;
 
 namespace xAPI.Client.Resources
 {
@@ -10,12 +11,14 @@ namespace xAPI.Client.Resources
         public Guid? Id { get; set; }
 
         [JsonProperty("actor")]
+        [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
         public Actor Actor { get; set; }
 
         [JsonProperty("verb")]
         public Verb Verb { get; set; }
 
         [JsonProperty("object")]
+        [JsonConverter(typeof(ObjectResourceConverter<Activity>))]
         public IStatementTarget Object { get; set; }
 
         [JsonProperty("result", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -31,6 +34,7 @@ namespace xAPI.Client.Resources
         public DateTimeOffset Stored { get; set; }
 
         [JsonProperty("authority", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
         public Actor Authority { get; set; }
 
         [JsonProperty("version", DefaultValueHandling = DefaultValueHandling.Ignore)]

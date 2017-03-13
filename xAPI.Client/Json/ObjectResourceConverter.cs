@@ -5,7 +5,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Json
 {
-    public class ObjectResourceConverter : JsonConverter
+    public class ObjectResourceConverter<T> : JsonConverter where T : IObjectResource
     {
         public override bool CanWrite { get { return false; } }
 
@@ -61,9 +61,13 @@ namespace xAPI.Client.Json
             {
                 return new SubStatement();
             }
-            else if (jsonObjectType == "Activity" || jsonObjectType == null)
+            else if (jsonObjectType == "Activity")
             {
                 return new Activity();
+            }
+            else if (string.IsNullOrEmpty(jsonObjectType))
+            {
+                return Activator.CreateInstance<T>();
             }
             else
             {

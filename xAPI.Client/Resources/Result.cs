@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using xAPI.Client.Json;
 
 namespace xAPI.Client.Resources
 {
@@ -18,6 +19,7 @@ namespace xAPI.Client.Resources
         public string Response { get; set; }
 
         [JsonProperty("duration", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan Duration { get; set; }
 
         [JsonProperty("extensions", DefaultValueHandling = DefaultValueHandling.Ignore)]
