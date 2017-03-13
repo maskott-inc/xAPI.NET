@@ -11,5 +11,8 @@ namespace xAPI.Client.Resources
 
         [JsonProperty("more")]
         public Uri More { get; set; }
+
+        [JsonIgnore]
+        public DateTimeOffset ConsistentThrough { get; set; }
     }
 }
