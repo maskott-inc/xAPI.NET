@@ -3,7 +3,7 @@ using System;
 
 namespace xAPI.Client.Resources
 {
-    public class StatementRef : ISubStatementTarget
+    public class StatementRef : IStatementTarget, ISubStatementTarget
     {
         [JsonProperty("id")]
         public Guid Id { get; set; }
