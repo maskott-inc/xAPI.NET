@@ -5,16 +5,16 @@ namespace xAPI.Client.Resources
 {
     public class ContextActivities
     {
-        [JsonProperty("parent", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("parent")]
         public List<Activity> Parent { get; set; }
 
-        [JsonProperty("grouping", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("grouping")]
         public List<Activity> Grouping { get; set; }
 
-        [JsonProperty("category", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("category")]
         public List<Activity> Category { get; set; }
 
-        [JsonProperty("other", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("other")]
         public List<Activity> Other { get; set; }
     }
 }

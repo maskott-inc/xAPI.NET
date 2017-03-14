@@ -11,7 +11,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Tests
 {
-    public class ActivitiesTests : BaseTest
+    public class ActivitiesTests : BaseEndpointTest
     {
         private const string ACTIVITY_ID = "http://www.example.org/activity";
 

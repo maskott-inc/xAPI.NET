@@ -11,7 +11,7 @@ namespace xAPI.Client.Resources
         [JsonProperty("display")]
         public LanguageMap Display { get; set; }
 
-        [JsonProperty("description", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("description")]
         public LanguageMap Description { get; set; }
 
         [JsonProperty("contentType")]
@@ -23,7 +23,7 @@ namespace xAPI.Client.Resources
         [JsonProperty("sha2")]
         public string SHA2 { get; set; }
 
-        [JsonProperty("fileUrl", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("fileUrl")]
         public Uri FileUrl { get; set; }
     }
 }

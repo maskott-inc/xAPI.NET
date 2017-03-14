@@ -102,7 +102,7 @@ namespace xAPI.Client.Endpoints.Impl
             request.Validate();
 
             var builder = new StringBuilder(ENDPOINT);
-            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
             builder.AppendFormat("&profileId={0}", Uri.EscapeDataString(request.ProfileId));
 
@@ -118,7 +118,7 @@ namespace xAPI.Client.Endpoints.Impl
             request.Validate();
 
             var builder = new StringBuilder(ENDPOINT);
-            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
             if (request.Since.HasValue)
             {

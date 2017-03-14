@@ -14,7 +14,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Tests
 {
-    public class StatesTests : BaseTest
+    public class StatesTests : BaseEndpointTest
     {
         private const string ACTIVITY_ID = "http://www.example.org/activity";
         private const string AGENT_NAME = "foo";

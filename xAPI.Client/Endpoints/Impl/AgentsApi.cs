@@ -26,7 +26,7 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             string url = string.Format("{0}?agent={1}", ENDPOINT, Uri.EscapeDataString(agentStr));
             return await this._client.GetJson<Person>(url, new GetJsonOptions());
         }

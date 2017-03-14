@@ -8,16 +8,16 @@ namespace xAPI.Client.Resources
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("mbox", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("mbox")]
         public Uri MBox { get; set; }
 
-        [JsonProperty("mbox_sha1sum", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("mbox_sha1sum")]
         public string MBoxSHA1Sum { get; set; }
 
-        [JsonProperty("openid", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("openid")]
         public Uri OpenId { get; set; }
 
-        [JsonProperty("account", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("account")]
         public AccountObject Account { get; set; }
 
         public abstract string ObjectType { get; }

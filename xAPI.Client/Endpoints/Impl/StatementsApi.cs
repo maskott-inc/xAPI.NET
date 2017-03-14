@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
@@ -31,7 +32,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PutJson(url, new PutJsonOptions() { }, request.Statement);
+                await this._client.PutJson(url, new PutJsonOptions() { DefaultValueHandling = DefaultValueHandling.Ignore }, request.Statement);
                 return true;
             }
             catch (ConflictException)
@@ -46,7 +47,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PostJson(url, new PostJsonOptions() { }, request.Statement);
+                await this._client.PostJson(url, new PostJsonOptions() { DefaultValueHandling = DefaultValueHandling.Ignore }, request.Statement);
                 return true;
             }
             catch (ConflictException)

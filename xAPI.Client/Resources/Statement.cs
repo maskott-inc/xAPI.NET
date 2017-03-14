@@ -21,26 +21,26 @@ namespace xAPI.Client.Resources
         [JsonConverter(typeof(ObjectResourceConverter<Activity>))]
         public IStatementTarget Object { get; set; }
 
-        [JsonProperty("result", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("result")]
         public Result Result { get; set; }
 
-        [JsonProperty("context", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("context")]
         public Context Context { get; set; }
 
-        [JsonProperty("timestamp", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("timestamp")]
         public DateTimeOffset? Timestamp { get; set; }
 
-        [JsonProperty("stored", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("stored")]
         public DateTimeOffset Stored { get; set; }
 
-        [JsonProperty("authority", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("authority")]
         [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
         public Actor Authority { get; set; }
 
-        [JsonProperty("version", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("version")]
         public XApiVersion Version { get; set; }
 
-        [JsonProperty("attachments", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("attachments")]
         public List<Attachment> Attachments { get; set; }
 
         public Statement()

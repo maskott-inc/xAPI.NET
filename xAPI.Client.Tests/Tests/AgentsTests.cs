@@ -11,7 +11,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Tests
 {
-    public class AgentsTests : BaseTest
+    public class AgentsTests : BaseEndpointTest
     {
         private const string AGENT_NAME = "foo";
         private const string AGENT_MBOX = "mailto:test@example.org";

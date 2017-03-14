@@ -9,7 +9,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Tests
 {
-    public class AboutTests : BaseTest
+    public class AboutTests : BaseEndpointTest
     {
         protected override EndpointConfiguration GetEndpointConfiguration()
         {

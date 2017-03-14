@@ -9,16 +9,16 @@ namespace xAPI.Client.Resources
         [JsonProperty("name")]
         public List<string> Name { get; set; }
 
-        [JsonProperty("mbox", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("mbox")]
         public List<Uri> MBox { get; set; }
 
-        [JsonProperty("mbox_sha1sum", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("mbox_sha1sum")]
         public List<string> MBoxSHA1Sum { get; set; }
 
-        [JsonProperty("openid", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("openid")]
         public List<Uri> OpenId { get; set; }
 
-        [JsonProperty("account", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("account")]
         public List<AccountObject> Account { get; set; }
 
         public string ObjectType => "Person";

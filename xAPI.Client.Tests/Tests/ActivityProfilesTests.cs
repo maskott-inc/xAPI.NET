@@ -14,7 +14,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Tests
 {
-    public class ActivityProfilesTests : BaseTest
+    public class ActivityProfilesTests : BaseEndpointTest
     {
         private const string ACTIVITY_ID = "http://www.example.org/activity";
         private static readonly string PROFILE_ID = Guid.NewGuid().ToString();

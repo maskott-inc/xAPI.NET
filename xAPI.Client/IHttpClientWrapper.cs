@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using xAPI.Client.Authenticators;
@@ -26,16 +28,16 @@ namespace xAPI.Client
 
     internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
     {
-        private HttpClient _httpClient { get; set; }
-        private ILRSAuthenticator _authenticator { get; set; }
+        private HttpClient _httpClient;
+        private ILRSAuthenticator _authenticator;
+        private readonly JsonMediaTypeFormatter _formatter = new JsonMediaTypeFormatter();
 
         #region IHttpClientWrapper members
 
         async Task<T> IHttpClientWrapper.GetJson<T>(string url, GetJsonOptions options)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
             this.SetAcceptJsonContentType();
             this.SetAcceptedLanguages(options.AcceptedLanguages);
 
@@ -44,36 +46,33 @@ namespace xAPI.Client
             this.EnsureResponseIsValid(response);
 
             // Parse content
-            return await response.Content.ReadAsAsync<T>();
+            return await response.Content.ReadAsAsync<T>(new[] { this._formatter });
         }
 
         async Task IHttpClientWrapper.PutJson<T>(string url, PutJsonOptions options, T content)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PutAsJsonAsync(url, content);
+            HttpResponseMessage response = await this._httpClient.PutAsync(url, content, this._formatter);
             this.EnsureResponseIsValid(response);
         }
 
         async Task IHttpClientWrapper.PostJson<T>(string url, PostJsonOptions options, T content)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PostAsJsonAsync(url, content);
+            HttpResponseMessage response = await this._httpClient.PostAsync(url, content, this._formatter);
             this.EnsureResponseIsValid(response);
         }
 
         async Task IHttpClientWrapper.GetJsonDocument<T>(string url, GetJsonDocumentOptions options, BaseDocument<T> document)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
             this.SetAcceptJsonContentType();
 
             // Perform request
@@ -82,18 +81,17 @@ namespace xAPI.Client
 
             document.LastModified = response.Content.Headers.LastModified;
             document.ETag = response.Headers.ETag?.Tag;
-            document.Content = await response.Content.ReadAsAsync<T>();
+            document.Content = await response.Content.ReadAsAsync<T>(new[] { this._formatter });
         }
 
         async Task IHttpClientWrapper.PutJsonDocument<T>(string url, PutJsonDocumentOptions options, BaseDocument<T> document)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
             this.SetIfMatchHeader(document.ETag);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PutAsJsonAsync(url, document.Content);
+            HttpResponseMessage response = await this._httpClient.PutAsync(url, document.Content, this._formatter);
             this.EnsureResponseIsValid(response);
 
             document.LastModified = response.Content?.Headers.LastModified ?? document.LastModified;
@@ -103,12 +101,11 @@ namespace xAPI.Client
         async Task IHttpClientWrapper.PostJsonDocument<T>(string url, PostJsonDocumentOptions options, BaseDocument<T> document)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
             this.SetIfMatchHeader(document.ETag);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PostAsJsonAsync(url, document.Content);
+            HttpResponseMessage response = await this._httpClient.PostAsync(url, document.Content, this._formatter);
             this.EnsureResponseIsValid(response);
 
             document.LastModified = response.Content?.Headers.LastModified ?? document.LastModified;
@@ -118,8 +115,7 @@ namespace xAPI.Client
         async Task IHttpClientWrapper.Delete(string url, DeleteOptions options)
         {
             // Handle specific headers
-            this.ClearSpecificRequestHeaders();
-            await this.SetAuthorizationHeader();
+            await this.InitializeHttpClient(options);
             if (!string.IsNullOrEmpty(options.ETag))
             {
                 this.SetIfMatchHeader(options.ETag);
@@ -171,13 +167,15 @@ namespace xAPI.Client
 
         #region Utils
 
-        private void ClearSpecificRequestHeaders()
+        private async Task InitializeHttpClient(BaseJsonOptions options)
         {
             this._httpClient.DefaultRequestHeaders.Authorization = null;
             this._httpClient.DefaultRequestHeaders.Accept.Clear();
             this._httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
             this._httpClient.DefaultRequestHeaders.IfMatch.Clear();
             this._httpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
+            this._formatter.SerializerSettings.DefaultValueHandling = options.DefaultValueHandling;
+            await this.SetAuthorizationHeader();
         }
 
         private async Task SetAuthorizationHeader()
@@ -292,32 +290,37 @@ namespace xAPI.Client
         #endregion
     }
 
-    internal class GetJsonOptions
+    internal abstract class BaseJsonOptions
+    {
+        public DefaultValueHandling DefaultValueHandling { get; set; }
+    }
+
+    internal class GetJsonOptions : BaseJsonOptions
     {
         public List<string> AcceptedLanguages { get; set; }
     }
 
-    internal class PutJsonOptions
+    internal class PutJsonOptions : BaseJsonOptions
     {
     }
 
-    internal class PostJsonOptions
+    internal class PostJsonOptions : BaseJsonOptions
     {
     }
 
-    internal class GetJsonDocumentOptions
+    internal class GetJsonDocumentOptions : BaseJsonOptions
     {
     }
 
-    internal class PutJsonDocumentOptions
+    internal class PutJsonDocumentOptions : BaseJsonOptions
     {
     }
 
-    internal class PostJsonDocumentOptions
+    internal class PostJsonDocumentOptions : BaseJsonOptions
     {
     }
 
-    internal class DeleteOptions
+    internal class DeleteOptions : BaseJsonOptions
     {
         public string ETag { get; set; }
     }

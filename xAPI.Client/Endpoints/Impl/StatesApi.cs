@@ -110,7 +110,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
-            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
             if (request.Registration.HasValue)
             {
@@ -131,7 +131,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
-            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
             if (request.Registration.HasValue)
             {
@@ -155,7 +155,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
-            string agentStr = JsonConvert.SerializeObject(request.Agent);
+            string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
             if (request.Registration.HasValue)
             {

@@ -12,7 +12,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Tests
 {
-    public class StatementsTests : BaseTest
+    public class StatementsTests : BaseEndpointTest
     {
         private static readonly Guid STATEMENT_ID = new Guid("f5a6b27d-4f4e-4d62-812b-a6b1891bfe43");
         private static readonly Guid STATEMENT_ID_2 = new Guid("b2aa659b-7ca4-46bf-90f6-c4c9c79b88e7");
@@ -88,46 +88,6 @@ namespace xAPI.Client.Tests
             // Assert
             statement.Should().NotBeNull();
             statement.Id.Should().Be(STATEMENT_ID);
-        }
-
-        [Test]
-        public async Task can_get_many_statements()
-        {
-            // Arrange
-            var request = new GetStatementsRequest()
-            {
-                ActivityId = new Uri(ACTIVITY_ID)
-            };
-            this._mockHttp
-                .When(HttpMethod.Get, this.GetApiUrl("statements"))
-                .WithQueryString("activityId", ACTIVITY_ID)
-                .WithHeaders("Accept-Language", "*")
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
-
-            // Act
-            StatementResult result = await this._client.Statements.GetMany(request);
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Statements.Should().NotBeNullOrEmpty();
-            result.More.Should().Be(new Uri(MORE));
-        }
-
-        [Test]
-        public async Task can_get_more_statements()
-        {
-            // Arrange
-            var more = new Uri(MORE);
-            this._mockHttp
-                .When(HttpMethod.Get, this.GetApiUrl(MORE))
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
-
-            // Act
-            StatementResult result = await this._client.Statements.GetMore(more);
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Statements.Should().NotBeNullOrEmpty();
         }
 
         [Test]
@@ -273,6 +233,46 @@ namespace xAPI.Client.Tests
 
             // Assert
             result.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task can_get_many_statements()
+        {
+            // Arrange
+            var request = new GetStatementsRequest()
+            {
+                ActivityId = new Uri(ACTIVITY_ID)
+            };
+            this._mockHttp
+                .When(HttpMethod.Get, this.GetApiUrl("statements"))
+                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithHeaders("Accept-Language", "*")
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
+
+            // Act
+            StatementResult result = await this._client.Statements.GetMany(request);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Statements.Should().NotBeNullOrEmpty();
+            result.More.Should().Be(new Uri(MORE));
+        }
+
+        [Test]
+        public async Task can_get_more_statements()
+        {
+            // Arrange
+            var more = new Uri(MORE);
+            this._mockHttp
+                .When(HttpMethod.Get, this.GetApiUrl(MORE))
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
+
+            // Act
+            StatementResult result = await this._client.Statements.GetMore(more);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Statements.Should().NotBeNullOrEmpty();
         }
 
         [Test]
