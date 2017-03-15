@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using xAPI.Client.Http;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 

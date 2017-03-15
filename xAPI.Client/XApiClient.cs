@@ -2,6 +2,7 @@
 using xAPI.Client.Configuration;
 using xAPI.Client.Endpoints;
 using xAPI.Client.Endpoints.Impl;
+using xAPI.Client.Http;
 
 namespace xAPI.Client
 {

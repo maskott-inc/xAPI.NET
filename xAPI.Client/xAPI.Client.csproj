@@ -61,6 +61,15 @@
     <Compile Include="Exceptions\PreConditionFailedException.cs" />
     <Compile Include="Exceptions\ConflictException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
+    <Compile Include="Http\BaseJsonOptions.cs" />
+    <Compile Include="Http\DeleteOptions.cs" />
+    <Compile Include="Http\GetJsonDocumentOptions.cs" />
+    <Compile Include="Http\GetJsonOptions.cs" />
+    <Compile Include="Http\HttpClientWrapper.cs" />
+    <Compile Include="Http\PostJsonDocumentOptions.cs" />
+    <Compile Include="Http\PostJsonOptions.cs" />
+    <Compile Include="Http\PutJsonDocumentOptions.cs" />
+    <Compile Include="Http\PutJsonOptions.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
     <Compile Include="Requests\AAgentProfileRequest.cs" />
     <Compile Include="Requests\AGetStatementRequest.cs" />
@@ -105,7 +114,7 @@
     <Compile Include="Endpoints\Impl\StatesApi.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Exceptions\ForbiddenException.cs" />
-    <Compile Include="IHttpClientWrapper.cs" />
+    <Compile Include="Http\IHttpClientWrapper.cs" />
     <Compile Include="Json\XApiVersionConverter.cs" />
     <Compile Include="Resources\Agent.cs" />
     <Compile Include="Resources\AccountObject.cs" />

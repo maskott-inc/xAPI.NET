@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using xAPI.Client.Http;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Endpoints.Impl

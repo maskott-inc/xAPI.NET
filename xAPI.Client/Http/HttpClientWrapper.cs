@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -11,21 +10,8 @@ using xAPI.Client.Configuration;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Resources;
 
-namespace xAPI.Client
+namespace xAPI.Client.Http
 {
-    internal interface IHttpClientWrapper
-    {
-        Task<T> GetJson<T>(string url, GetJsonOptions options);
-        Task PutJson<T>(string url, PutJsonOptions options, T content);
-        Task PostJson<T>(string url, PostJsonOptions options, T content);
-
-        Task GetJsonDocument<T>(string url, GetJsonDocumentOptions options, BaseDocument<T> document);
-        Task PutJsonDocument<T>(string url, PutJsonDocumentOptions options, BaseDocument<T> document);
-        Task PostJsonDocument<T>(string url, PostJsonDocumentOptions options, BaseDocument<T> document);
-
-        Task Delete(string url, DeleteOptions options);
-    }
-
     internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
     {
         private HttpClient _httpClient;
@@ -288,40 +274,5 @@ namespace xAPI.Client
         }
 
         #endregion
-    }
-
-    internal abstract class BaseJsonOptions
-    {
-        public DefaultValueHandling DefaultValueHandling { get; set; }
-    }
-
-    internal class GetJsonOptions : BaseJsonOptions
-    {
-        public List<string> AcceptedLanguages { get; set; }
-    }
-
-    internal class PutJsonOptions : BaseJsonOptions
-    {
-    }
-
-    internal class PostJsonOptions : BaseJsonOptions
-    {
-    }
-
-    internal class GetJsonDocumentOptions : BaseJsonOptions
-    {
-    }
-
-    internal class PutJsonDocumentOptions : BaseJsonOptions
-    {
-    }
-
-    internal class PostJsonDocumentOptions : BaseJsonOptions
-    {
-    }
-
-    internal class DeleteOptions : BaseJsonOptions
-    {
-        public string ETag { get; set; }
     }
 }

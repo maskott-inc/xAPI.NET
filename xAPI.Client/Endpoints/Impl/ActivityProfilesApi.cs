@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
+using xAPI.Client.Http;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
