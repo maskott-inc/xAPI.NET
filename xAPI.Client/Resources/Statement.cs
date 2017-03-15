@@ -7,17 +7,17 @@ namespace xAPI.Client.Resources
 {
     public class Statement
     {
-        [JsonProperty("id")]
+        [JsonProperty("id", Required = Required.Always)]
         public Guid Id { get; set; }
 
-        [JsonProperty("actor")]
+        [JsonProperty("actor", Required = Required.Always)]
         [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
         public Actor Actor { get; set; }
 
-        [JsonProperty("verb")]
+        [JsonProperty("verb", Required = Required.Always)]
         public Verb Verb { get; set; }
 
-        [JsonProperty("object")]
+        [JsonProperty("object", Required = Required.Always)]
         [JsonConverter(typeof(ObjectResourceConverter<Activity>))]
         public IStatementTarget Object { get; set; }
 
@@ -27,17 +27,17 @@ namespace xAPI.Client.Resources
         [JsonProperty("context")]
         public Context Context { get; set; }
 
-        [JsonProperty("timestamp")]
+        [JsonProperty("timestamp", Required = Required.Always)]
         public DateTimeOffset? Timestamp { get; set; }
 
-        [JsonProperty("stored")]
+        [JsonProperty("stored", Required = Required.Always)]
         public DateTimeOffset Stored { get; set; }
 
-        [JsonProperty("authority")]
+        [JsonProperty("authority", Required = Required.Always)]
         [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
         public Actor Authority { get; set; }
 
-        [JsonProperty("version")]
+        [JsonProperty("version", Required = Required.Always)]
         public XApiVersion Version { get; set; }
 
         [JsonProperty("attachments")]

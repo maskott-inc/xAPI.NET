@@ -7,14 +7,14 @@ namespace xAPI.Client.Resources
 {
     public class SubStatement : IStatementTarget
     {
-        [JsonProperty("actor")]
+        [JsonProperty("actor", Required = Required.Always)]
         [JsonConverter(typeof(ObjectResourceConverter<Agent>))]
         public Actor Actor { get; set; }
 
-        [JsonProperty("verb")]
+        [JsonProperty("verb", Required = Required.Always)]
         public Verb Verb { get; set; }
 
-        [JsonProperty("object")]
+        [JsonProperty("object", Required = Required.Always)]
         [JsonConverter(typeof(ObjectResourceConverter<Activity>))]
         public ISubStatementTarget Object { get; set; }
 
@@ -24,7 +24,7 @@ namespace xAPI.Client.Resources
         [JsonProperty("context")]
         public Context Context { get; set; }
 
-        [JsonProperty("timestamp")]
+        [JsonProperty("timestamp", Required = Required.Always)]
         public DateTimeOffset? Timestamp { get; set; }
 
         [JsonProperty("attachments")]

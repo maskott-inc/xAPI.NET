@@ -6,7 +6,7 @@ namespace xAPI.Client.Resources
 {
     public class StatementResult
     {
-        [JsonProperty("statements")]
+        [JsonProperty("statements", Required = Required.Always)]
         public List<Statement> Statements { get; set; }
 
         [JsonProperty("more")]

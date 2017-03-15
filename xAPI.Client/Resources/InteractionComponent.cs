@@ -4,7 +4,7 @@ namespace xAPI.Client.Resources
 {
     public class InteractionComponent
     {
-        [JsonProperty("id")]
+        [JsonProperty("id", Required = Required.Always)]
         public string Id { get; set; }
 
         [JsonProperty("description")]

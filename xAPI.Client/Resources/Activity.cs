@@ -5,7 +5,7 @@ namespace xAPI.Client.Resources
 {
     public class Activity : IStatementTarget, ISubStatementTarget
     {
-        [JsonProperty("id")]
+        [JsonProperty("id", Required = Required.Always)]
         public Uri Id { get; set; }
 
         [JsonProperty("definition")]
