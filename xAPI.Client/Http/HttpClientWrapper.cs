@@ -160,7 +160,7 @@ namespace xAPI.Client.Http
             this._httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
             this._httpClient.DefaultRequestHeaders.IfMatch.Clear();
             this._httpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
-            this._formatter.SerializerSettings.DefaultValueHandling = options.DefaultValueHandling;
+            this._formatter.SerializerSettings.NullValueHandling = options.NullValueHandling;
             await this.SetAuthorizationHeader();
         }
 

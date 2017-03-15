@@ -33,7 +33,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PutJson(url, new PutJsonOptions() { DefaultValueHandling = DefaultValueHandling.Ignore }, request.Statement);
+                await this._client.PutJson(url, new PutJsonOptions() { NullValueHandling = NullValueHandling.Ignore }, request.Statement);
                 return true;
             }
             catch (ConflictException)
@@ -48,7 +48,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PostJson(url, new PostJsonOptions() { DefaultValueHandling = DefaultValueHandling.Ignore }, request.Statement);
+                await this._client.PostJson(url, new PostJsonOptions() { NullValueHandling = NullValueHandling.Ignore }, request.Statement);
                 return true;
             }
             catch (ConflictException)

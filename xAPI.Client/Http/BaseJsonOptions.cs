@@ -4,6 +4,6 @@ namespace xAPI.Client.Http
 {
     internal abstract class BaseJsonOptions
     {
-        public DefaultValueHandling DefaultValueHandling { get; set; }
+        public NullValueHandling NullValueHandling { get; set; }
     }
 }
