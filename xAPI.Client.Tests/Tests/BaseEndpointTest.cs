@@ -8,12 +8,12 @@ namespace xAPI.Client.Tests
 {
     public abstract class BaseEndpointTest : BaseTest
     {
-        private const string ENDPOINT_URI = "https://www.example.org/xAPI/";
-        private const string VERSION = "1.0.3";
-        private const string BASIC_HTTP_USERNAME = "test_username";
-        private const string BASIC_HTTP_PASSWORD = "test_password";
-        private const string OAUTH_CLIENT_ID = "test_client_id";
-        private const string OAUTH_CLIENT_SECRET = "test_client_secret";
+        protected const string ENDPOINT_URI = "https://www.example.org/xAPI/";
+        protected const string VERSION = "1.0.3";
+        protected const string BASIC_HTTP_USERNAME = "test_username";
+        protected const string BASIC_HTTP_PASSWORD = "test_password";
+        protected const string OAUTH_CLIENT_ID = "test_client_id";
+        protected const string OAUTH_CLIENT_SECRET = "test_client_secret";
 
         protected MockHttpMessageHandler _mockHttp;
         protected IXApiClient _client;

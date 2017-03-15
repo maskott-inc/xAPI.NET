@@ -22,6 +22,7 @@ namespace xAPI.Client.Tests
             // Arrange
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("about"))
+                .WithHeaders("X-Experience-API-Version", VERSION)
                 .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("about/get.json"));
 
             // Act
