@@ -14,70 +14,89 @@ namespace xAPI.Client.Http
 {
     internal class HttpClientWrapper : IHttpClientWrapper, IDisposable
     {
+        private const string XAPI_VERSION_HEADER = "X-Experience-API-Version";
         private HttpClient _httpClient;
         private ILRSAuthenticator _authenticator;
-        private readonly StrictJsonMediaTypeFormatter _formatter = new StrictJsonMediaTypeFormatter();
 
         #region IHttpClientWrapper members
 
         async Task<T> IHttpClientWrapper.GetJson<T>(string url, GetJsonOptions options)
         {
-            // Handle specific headers
-            await this.InitializeHttpClient(options);
-            this.SetAcceptJsonContentType();
-            this.SetAcceptedLanguages(options.AcceptedLanguages);
+            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
+
+            // Initialize request
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            await this.SetAuthorizationHeader(request);
+            this.SetAcceptJsonContentType(request);
+            this.SetAcceptedLanguages(request, options.AcceptedLanguages);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.GetAsync(url);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
             // Parse content
-            return await response.Content.ReadAsAsync<T>(new[] { this._formatter });
+            return await response.Content.ReadAsAsync<T>(new[] { formatter });
         }
 
         async Task IHttpClientWrapper.PutJson<T>(string url, PutJsonOptions options, T content)
         {
-            // Handle specific headers
-            await this.InitializeHttpClient(options);
+            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
+
+            // Initialize request
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            await this.SetAuthorizationHeader(request);
+            request.Content = new ObjectContent<T>(content, formatter);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PutAsync(url, content, this._formatter);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
         }
 
         async Task IHttpClientWrapper.PostJson<T>(string url, PostJsonOptions options, T content)
         {
-            // Handle specific headers
-            await this.InitializeHttpClient(options);
+            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
+
+            // Initialize request
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            await this.SetAuthorizationHeader(request);
+            request.Content = new ObjectContent<T>(content, formatter);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PostAsync(url, content, this._formatter);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
         }
 
         async Task IHttpClientWrapper.GetJsonDocument<T>(string url, GetJsonDocumentOptions options, BaseDocument<T> document)
         {
-            // Handle specific headers
-            await this.InitializeHttpClient(options);
-            this.SetAcceptJsonContentType();
+            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
+
+            // Initialize request
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            await this.SetAuthorizationHeader(request);
+            this.SetAcceptJsonContentType(request);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.GetAsync(url);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
+            // Parse content
             document.LastModified = response.Content.Headers.LastModified;
             document.ETag = response.Headers.ETag?.Tag;
-            document.Content = await response.Content.ReadAsAsync<T>(new[] { this._formatter });
+            document.Content = await response.Content.ReadAsAsync<T>(new[] { formatter });
         }
 
         async Task IHttpClientWrapper.PutJsonDocument<T>(string url, PutJsonDocumentOptions options, BaseDocument<T> document)
         {
-            // Handle specific headers
-            await this.InitializeHttpClient(options);
-            this.SetIfMatchHeader(document.ETag);
+            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
+
+            // Initialize request
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            await this.SetAuthorizationHeader(request);
+            this.SetIfMatchHeader(request, document.ETag);
+            request.Content = new ObjectContent<T>(document.Content, formatter);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PutAsync(url, document.Content, this._formatter);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
             document.LastModified = response.Content?.Headers.LastModified ?? document.LastModified;
@@ -86,12 +105,16 @@ namespace xAPI.Client.Http
 
         async Task IHttpClientWrapper.PostJsonDocument<T>(string url, PostJsonDocumentOptions options, BaseDocument<T> document)
         {
-            // Handle specific headers
-            await this.InitializeHttpClient(options);
-            this.SetIfMatchHeader(document.ETag);
+            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
+
+            // Initialize request
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            await this.SetAuthorizationHeader(request);
+            this.SetIfMatchHeader(request, document.ETag);
+            request.Content = new ObjectContent<T>(document.Content, formatter);
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.PostAsync(url, document.Content, this._formatter);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
             document.LastModified = response.Content?.Headers.LastModified ?? document.LastModified;
@@ -101,14 +124,15 @@ namespace xAPI.Client.Http
         async Task IHttpClientWrapper.Delete(string url, DeleteOptions options)
         {
             // Handle specific headers
-            await this.InitializeHttpClient(options);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            await this.SetAuthorizationHeader(request);
             if (!string.IsNullOrEmpty(options.ETag))
             {
-                this.SetIfMatchHeader(options.ETag);
+                this.SetIfMatchHeader(request, options.ETag);
             }
 
             // Perform request
-            HttpResponseMessage response = await this._httpClient.DeleteAsync(url);
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
         }
 
@@ -136,7 +160,7 @@ namespace xAPI.Client.Http
 
             this._httpClient = configuration.HttpClient;
             this._httpClient.BaseAddress = configuration.EndpointUri;
-            this._httpClient.DefaultRequestHeaders.Add("X-Experience-API-Version", configuration.Version.ToString());
+            this._httpClient.DefaultRequestHeaders.Add(XAPI_VERSION_HEADER, configuration.Version.ToString());
 
             this._authenticator = configuration.GetAuthenticator();
         }
@@ -153,57 +177,53 @@ namespace xAPI.Client.Http
 
         #region Utils
 
-        private async Task InitializeHttpClient(BaseJsonOptions options)
+        private StrictJsonMediaTypeFormatter GetFormatter(BaseJsonOptions options)
         {
-            this._httpClient.DefaultRequestHeaders.Authorization = null;
-            this._httpClient.DefaultRequestHeaders.Accept.Clear();
-            this._httpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
-            this._httpClient.DefaultRequestHeaders.IfMatch.Clear();
-            this._httpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
-            this._formatter.SerializerSettings.NullValueHandling = options.NullValueHandling;
-            await this.SetAuthorizationHeader();
+            var formatter = new StrictJsonMediaTypeFormatter();
+            formatter.SerializerSettings.NullValueHandling = options.NullValueHandling;
+            return formatter;
         }
 
-        private async Task SetAuthorizationHeader()
+        private async Task SetAuthorizationHeader(HttpRequestMessage request)
         {
             AuthorizationHeaderInfos authorization = await this._authenticator.GetAuthorization();
             if (authorization != null)
             {
-                this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                request.Headers.Authorization = new AuthenticationHeaderValue(
                     authorization.Scheme, authorization.Parameter
                 );
             }
             else
             {
-                this._httpClient.DefaultRequestHeaders.Authorization = null;
+                request.Headers.Authorization = null;
             }
         }
 
-        private void SetAcceptJsonContentType()
+        private void SetAcceptJsonContentType(HttpRequestMessage request)
         {
-            this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private void SetAcceptedLanguages(List<string> acceptedLanguages)
+        private void SetAcceptedLanguages(HttpRequestMessage request, List<string> acceptedLanguages)
         {
             if (acceptedLanguages != null)
             {
                 foreach (string language in acceptedLanguages)
                 {
-                    this._httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(language));
+                    request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(language));
                 }
             }
         }
 
-        private void SetIfMatchHeader(string etag)
+        private void SetIfMatchHeader(HttpRequestMessage request, string etag)
         {
             if (!string.IsNullOrEmpty(etag))
             {
-                this._httpClient.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue(etag));
+                request.Headers.IfMatch.Add(new EntityTagHeaderValue(etag));
             }
             else
             {
-                this._httpClient.DefaultRequestHeaders.IfNoneMatch.Add(EntityTagHeaderValue.Any);
+                request.Headers.IfNoneMatch.Add(EntityTagHeaderValue.Any);
             }
         }
 
