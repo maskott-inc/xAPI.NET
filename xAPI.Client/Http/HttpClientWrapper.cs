@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using xAPI.Client.Authenticators;
 using xAPI.Client.Configuration;
 using xAPI.Client.Exceptions;
+using xAPI.Client.Json;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Http
@@ -16,7 +16,7 @@ namespace xAPI.Client.Http
     {
         private HttpClient _httpClient;
         private ILRSAuthenticator _authenticator;
-        private readonly JsonMediaTypeFormatter _formatter = new JsonMediaTypeFormatter();
+        private readonly StrictJsonMediaTypeFormatter _formatter = new StrictJsonMediaTypeFormatter();
 
         #region IHttpClientWrapper members
 

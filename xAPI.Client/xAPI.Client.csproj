@@ -71,6 +71,7 @@
     <Compile Include="Http\PutJsonDocumentOptions.cs" />
     <Compile Include="Http\PutJsonOptions.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
+    <Compile Include="Json\StrictJsonMediaTypeFormatter.cs" />
     <Compile Include="Requests\AAgentProfileRequest.cs" />
     <Compile Include="Requests\AGetStatementRequest.cs" />
     <Compile Include="Requests\ASingleAgentProfileRequest.cs" />
