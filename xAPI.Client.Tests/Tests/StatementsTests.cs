@@ -17,6 +17,8 @@ namespace xAPI.Client.Tests
         private static readonly Guid STATEMENT_ID = new Guid("f5a6b27d-4f4e-4d62-812b-a6b1891bfe43");
         private static readonly Guid STATEMENT_ID_2 = new Guid("b2aa659b-7ca4-46bf-90f6-c4c9c79b88e7");
         private const string ACTIVITY_ID = "http://www.example.org/activity";
+        private const string ACTIVITY_NAME = "foo";
+        private const string ACTIVITY_TYPE = "http://adlnet.gov/expapi/activities/meeting";
         private const string AGENT_NAME = "foo";
         private const string AGENT_MBOX = "mailto:test@example.org";
         private const string VERB = "http://www.example.org/verb";
@@ -328,7 +330,8 @@ namespace xAPI.Client.Tests
                     Id = new Uri(ACTIVITY_ID),
                     Definition = new ActivityDefinition()
                     {
-                        //TODO
+                        Name = new LanguageMap() { { "en-US", ACTIVITY_NAME } },
+                        Type = new Uri(ACTIVITY_TYPE)
                     }
                 }
             };
