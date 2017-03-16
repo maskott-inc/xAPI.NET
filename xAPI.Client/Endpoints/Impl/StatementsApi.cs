@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
@@ -12,6 +15,7 @@ namespace xAPI.Client.Endpoints.Impl
     internal class StatementsApi : IStatementsApi
     {
         private const string ENDPOINT = "statements";
+        private const string XAPI_CONSISTENT_THROUGH_HEADER = "X-Experience-API-Consistent-Through";
         private readonly IHttpClientWrapper _client;
 
         public StatementsApi(IHttpClientWrapper client)
@@ -83,7 +87,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            throw new NotImplementedException();
+            string url = this.BuildUrl(request);
+            return await this._client.GetJson<StatementResult>(
+                url: url,
+                options: new GetJsonOptions() { AcceptedLanguages = request.GetAcceptedLanguages() },
+                onResponse: this.CompleteStatementResults
+            );
         }
 
         async Task<StatementResult> IStatementsApi.GetMore(Uri more)
@@ -92,8 +101,16 @@ namespace xAPI.Client.Endpoints.Impl
             {
                 throw new ArgumentNullException(nameof(more));
             }
+            if (more.IsAbsoluteUri)
+            {
+                throw new ArgumentException("The URI must be relative", nameof(more));
+            }
 
-            throw new NotImplementedException();
+            return await this._client.GetJson<StatementResult>(
+                url: more.ToString(),
+                options: new GetJsonOptions() { },
+                onResponse: this.CompleteStatementResults
+            );
         }
 
         async Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
@@ -135,6 +152,33 @@ namespace xAPI.Client.Endpoints.Impl
         private string BuildUrl(PostStatementRequest request)
         {
             return ENDPOINT;
+        }
+
+        private string BuildUrl(GetStatementsRequest request)
+        {
+            var builder = new StringBuilder(ENDPOINT);
+
+            //TODO
+
+            return builder.ToString();
+        }
+
+        private void CompleteStatementResults(HttpResponseMessage response, StatementResult result)
+        {
+            IEnumerable<string> values;
+            if (!response.Headers.TryGetValues(XAPI_CONSISTENT_THROUGH_HEADER, out values))
+            {
+                throw new LRSException($"Header {XAPI_CONSISTENT_THROUGH_HEADER} is missing from LRS response");
+            }
+
+            string header = values.First();
+            DateTimeOffset date;
+            if (!DateTimeOffset.TryParse(header, out date))
+            {
+                throw new LRSException($"Header {XAPI_CONSISTENT_THROUGH_HEADER} is not in a valid DateTime format");
+            }
+
+            result.ConsistentThrough = date;
         }
 
         #endregion

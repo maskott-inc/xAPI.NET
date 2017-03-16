@@ -1,2 +1,83 @@
 ﻿{
+  "statements": [
+    {
+      "id": "fd41c918-b88b-4b20-a0a5-a4c32391aaa0",
+      "stored": "2015-11-18T12:17:00+00:00",
+      "timestamp": "2015-11-18T12:17:00+00:00",
+      "actor": {
+        "objectType": "Agent",
+        "name": "Project Tin Can API",
+        "mbox": "mailto:user@example.com"
+      },
+      "verb": {
+        "id": "http://example.com/xapi/verbs#sent-a-statement",
+        "display": {
+          "en-US": "sent"
+        }
+      },
+      "object": {
+        "id": "http://example.com/xapi/activity/simplestatement",
+        "definition": {
+          "name": {
+            "en-US": "simple statement"
+          },
+          "description": {
+            "en-US": "A simple Experience API statement. Note that the LRS does not need to have any prior information about the Actor (learner), the verb, or the Activity/object."
+          }
+        }
+      },
+      "authority": {
+        "account": {
+          "homePage": "http://cloud.scorm.com/",
+          "name": "anonymous"
+        },
+        "objectType": "Agent"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "b2aa659b-7ca4-46bf-90f6-c4c9c79b88e7",
+      "stored": "2015-11-18T12:17:00+00:00",
+      "timestamp": "2015-12-18T12:17:00+00:00",
+      "actor": {
+        "objectType": "Agent",
+        "name": "Example Learner",
+        "mbox": "mailto:example.learner@adlnet.gov"
+      },
+      "verb": {
+        "id": "http://adlnet.gov/expapi/verbs/attempted",
+        "display": {
+          "en-US": "attempted"
+        }
+      },
+      "object": {
+        "id": "http://example.adlnet.gov/xapi/example/simpleCBT",
+        "definition": {
+          "name": {
+            "en-US": "simple CBT course"
+          },
+          "description": {
+            "en-US": "A fictitious example CBT course."
+          }
+        }
+      },
+      "result": {
+        "score": {
+          "scaled": 0.95
+        },
+        "success": true,
+        "completion": true,
+        "duration": "PT1234S"
+      },
+      "authority": {
+        "account": {
+          "homePage": "http://cloud.scorm.com/",
+          "name": "anonymous"
+        },
+        "objectType": "Agent"
+      },
+      "version": "1.0.0"
+    }
+  ],
+  "more": "more?foo=bar"
 }

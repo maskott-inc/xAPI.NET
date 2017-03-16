@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
@@ -22,7 +23,9 @@ namespace xAPI.Client.Tests
         private const string AGENT_NAME = "foo";
         private const string AGENT_MBOX = "mailto:test@example.org";
         private const string VERB = "http://www.example.org/verb";
-        private const string MORE = "/more?foo=bar";
+        private const string MORE = "more?foo=bar";
+        private const string XAPI_CONSISTENT_THROUGH_HEADER = "X-Experience-API-Consistent-Through";
+        private const string XAPI_CONSISTENT_THROUGH_VALUE = "2017-01-01T00:00:00Z";
 
         [Test]
         public async Task can_get_single_statement()
@@ -249,7 +252,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
                 .WithQueryString("activityId", ACTIVITY_ID)
                 .WithHeaders("Accept-Language", "*")
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
+                .Respond(this.GetStatementsResponseMessage());
 
             // Act
             StatementResult result = await this._client.Statements.GetMany(request);
@@ -258,16 +261,17 @@ namespace xAPI.Client.Tests
             result.Should().NotBeNull();
             result.Statements.Should().NotBeNullOrEmpty();
             result.More.Should().Be(new Uri(MORE));
+            result.ConsistentThrough.Should().Be(DateTimeOffset.Parse(XAPI_CONSISTENT_THROUGH_VALUE));
         }
 
         [Test]
         public async Task can_get_more_statements()
         {
             // Arrange
-            var more = new Uri(MORE);
+            var more = new Uri(MORE, UriKind.Relative);
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl(MORE))
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get_many.json"));
+                .Respond(this.GetStatementsResponseMessage());
 
             // Act
             StatementResult result = await this._client.Statements.GetMore(more);
@@ -275,6 +279,7 @@ namespace xAPI.Client.Tests
             // Assert
             result.Should().NotBeNull();
             result.Statements.Should().NotBeNullOrEmpty();
+            result.ConsistentThrough.Should().Be(DateTimeOffset.Parse(XAPI_CONSISTENT_THROUGH_VALUE));
         }
 
         [Test]
@@ -354,6 +359,15 @@ namespace xAPI.Client.Tests
                 this.GetStatement(STATEMENT_ID),
                 this.GetStatement(STATEMENT_ID_2)
             };
+        }
+
+        private HttpResponseMessage GetStatementsResponseMessage()
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Headers.Add(XAPI_CONSISTENT_THROUGH_HEADER, XAPI_CONSISTENT_THROUGH_VALUE);
+            response.Content = new StringContent(this.ReadDataFile("statements/get_many.json"), Encoding.UTF8, "application/json");
+
+            return response;
         }
     }
 }

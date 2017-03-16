@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Http
 {
     internal interface IHttpClientWrapper
     {
-        Task<T> GetJson<T>(string url, GetJsonOptions options);
+        Task<T> GetJson<T>(string url, GetJsonOptions options, Action<HttpResponseMessage, T> onResponse = null);
         Task PutJson<T>(string url, PutJsonOptions options, T content);
         Task PostJson<T>(string url, PostJsonOptions options, T content);
 

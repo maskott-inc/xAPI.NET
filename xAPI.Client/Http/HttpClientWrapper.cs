@@ -20,7 +20,7 @@ namespace xAPI.Client.Http
 
         #region IHttpClientWrapper members
 
-        async Task<T> IHttpClientWrapper.GetJson<T>(string url, GetJsonOptions options)
+        async Task<T> IHttpClientWrapper.GetJson<T>(string url, GetJsonOptions options, Action<HttpResponseMessage, T> onResponse)
         {
             StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
 
@@ -35,7 +35,12 @@ namespace xAPI.Client.Http
             this.EnsureResponseIsValid(response);
 
             // Parse content
-            return await response.Content.ReadAsAsync<T>(new[] { formatter });
+            T result = await response.Content.ReadAsAsync<T>(new[] { formatter });
+
+            // Custom reponse callback
+            onResponse?.Invoke(response, result);
+
+            return result;
         }
 
         async Task IHttpClientWrapper.PutJson<T>(string url, PutJsonOptions options, T content)

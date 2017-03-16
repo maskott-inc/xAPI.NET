@@ -47,7 +47,9 @@ namespace xAPI.Client.Tests
 
         protected string GetApiUrl(string endpoint)
         {
-            return $"{ENDPOINT_URI}{endpoint}";
+            var baseUrl = new Uri(ENDPOINT_URI);
+            var url = new Uri(baseUrl, endpoint);
+            return url.ToString();
         }
     }
 }
