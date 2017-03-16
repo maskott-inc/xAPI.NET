@@ -61,6 +61,8 @@
     <Compile Include="Exceptions\PreConditionFailedException.cs" />
     <Compile Include="Exceptions\ConflictException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
+    <Compile Include="Exceptions\HttpException.cs" />
+    <Compile Include="Exceptions\XApiException.cs" />
     <Compile Include="Http\BaseJsonOptions.cs" />
     <Compile Include="Http\DeleteOptions.cs" />
     <Compile Include="Http\GetJsonDocumentOptions.cs" />
