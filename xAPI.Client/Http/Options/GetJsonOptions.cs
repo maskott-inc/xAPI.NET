@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace xAPI.Client.Http
+namespace xAPI.Client.Http.Options
 {
     internal class GetJsonOptions : BaseJsonOptions
     {

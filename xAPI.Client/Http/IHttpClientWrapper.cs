@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using xAPI.Client.Http.Options;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Http

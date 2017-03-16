@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using xAPI.Client.Http;
+using xAPI.Client.Http.Options;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Endpoints.Impl

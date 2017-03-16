@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Authenticators;
 using xAPI.Client.Configuration;
 using xAPI.Client.Exceptions;
+using xAPI.Client.Http.Options;
 using xAPI.Client.Json;
 using xAPI.Client.Resources;
 
