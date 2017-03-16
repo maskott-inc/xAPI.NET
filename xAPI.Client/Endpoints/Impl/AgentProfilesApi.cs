@@ -24,6 +24,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<AgentProfileDocument> IAgentProfilesApi.Get(GetAgentProfileRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             var document = new AgentProfileDocument();
             await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
@@ -32,6 +38,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<AgentProfileDocument<T>> IAgentProfilesApi.Get<T>(GetAgentProfileRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             var document = Activator.CreateInstance<AgentProfileDocument<T>>();
             await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
@@ -40,6 +52,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IAgentProfilesApi.Put<T>(PutAgentProfileRequest<T> request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -55,6 +73,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IAgentProfilesApi.Post<T>(PostAgentProfileRequest<T> request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -70,6 +94,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IAgentProfilesApi.Delete(DeleteAgentProfileRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -85,6 +115,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<List<string>> IAgentProfilesApi.GetMany(GetAgentProfilesRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
@@ -96,12 +132,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(ASingleAgentProfileRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
@@ -112,12 +142,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(GetAgentProfilesRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));

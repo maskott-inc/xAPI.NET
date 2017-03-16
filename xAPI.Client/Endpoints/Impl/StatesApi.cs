@@ -24,6 +24,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<StateDocument> IStatesApi.Get(GetStateRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             var document = new StateDocument();
             await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
@@ -32,6 +38,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<StateDocument<T>> IStatesApi.Get<T>(GetStateRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             var document = Activator.CreateInstance<StateDocument<T>>();
             await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
@@ -40,6 +52,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IStatesApi.Put<T>(PutStateRequest<T> request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -55,6 +73,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IStatesApi.Post<T>(PostStateRequest<T> request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -70,6 +94,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IStatesApi.Delete(DeleteStateRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -85,6 +115,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<List<string>> IStatesApi.GetMany(GetStatesRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
@@ -92,6 +128,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task IStatesApi.DeleteMany(DeleteStatesRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             await this._client.Delete(url, new DeleteOptions());
@@ -103,12 +145,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(ASingleStateRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
@@ -124,12 +160,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(GetStatesRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
@@ -148,12 +178,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(DeleteStatesRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });

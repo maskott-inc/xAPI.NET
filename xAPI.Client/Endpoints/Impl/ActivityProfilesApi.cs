@@ -23,6 +23,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<ActivityProfileDocument> IActivityProfilesApi.Get(GetActivityProfileRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             var document = new ActivityProfileDocument();
             await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
@@ -31,6 +37,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<ActivityProfileDocument<T>> IActivityProfilesApi.Get<T>(GetActivityProfileRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             var document = Activator.CreateInstance<ActivityProfileDocument<T>>();
             await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
@@ -39,6 +51,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IActivityProfilesApi.Put<T>(PutActivityProfileRequest<T> request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -54,6 +72,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IActivityProfilesApi.Post<T>(PostActivityProfileRequest<T> request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -69,6 +93,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IActivityProfilesApi.Delete(DeleteActivityProfileRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -84,6 +114,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<List<string>> IActivityProfilesApi.GetMany(GetActivityProfilesRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
@@ -95,12 +131,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(ASingleActivityProfileRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
             builder.AppendFormat("&profileId={0}", Uri.EscapeDataString(request.ProfileId));
@@ -110,12 +140,6 @@ namespace xAPI.Client.Endpoints.Impl
 
         private string BuildUrl(GetActivityProfilesRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
-
             var builder = new StringBuilder(ENDPOINT);
             builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
             if (request.Since.HasValue)

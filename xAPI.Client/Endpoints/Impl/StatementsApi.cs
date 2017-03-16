@@ -23,12 +23,24 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<Statement> IStatementsApi.Get(GetStatementRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
             return await this._client.GetJson<Statement>(url, new GetJsonOptions() { AcceptedLanguages = request.GetAcceptedLanguages() });
         }
 
         async Task<bool> IStatementsApi.Put(PutStatementRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -44,6 +56,12 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<bool> IStatementsApi.Post(PostStatementRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             string url = this.BuildUrl(request);
 
             try
@@ -59,16 +77,33 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<StatementResult> IStatementsApi.GetMany(GetStatementsRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             throw new NotImplementedException();
         }
 
         async Task<StatementResult> IStatementsApi.GetMore(Uri more)
         {
+            if (more == null)
+            {
+                throw new ArgumentNullException(nameof(more));
+            }
+
             throw new NotImplementedException();
         }
 
         async Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Validate();
+
             throw new NotImplementedException();
         }
 
