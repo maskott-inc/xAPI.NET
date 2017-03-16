@@ -107,8 +107,9 @@ namespace xAPI.Client.Endpoints.Impl
                 throw new ArgumentException("The URI must be relative", nameof(more));
             }
 
+            string url = this.BuildUrl(more);
             return await this._client.GetJson<StatementResult>(
-                url: more.ToString(),
+                url: url,
                 options: new GetJsonOptions() { },
                 onResponse: this.CompleteStatementResults
             );
@@ -162,6 +163,13 @@ namespace xAPI.Client.Endpoints.Impl
             //TODO
 
             return builder.ToString();
+        }
+
+        private string BuildUrl(Uri more)
+        {
+            // Forcing the slash at the start of the path makes it
+            // absolute, as required by the spec
+            return $"/{more.ToString().TrimStart('/')}";
         }
 
         private void CompleteStatementResults(HttpResponseMessage response, StatementResult result)

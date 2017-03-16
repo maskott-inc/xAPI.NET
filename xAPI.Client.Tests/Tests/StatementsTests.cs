@@ -269,8 +269,11 @@ namespace xAPI.Client.Tests
         {
             // Arrange
             var more = new Uri(MORE, UriKind.Relative);
+            var endpointUrl = new Uri(ENDPOINT_URI);
+            var hostUrl = new Uri(endpointUrl.GetLeftPart(UriPartial.Authority));
+            var moreAbsoluteUrl = new Uri(hostUrl, more);
             this._mockHttp
-                .When(HttpMethod.Get, this.GetApiUrl(MORE))
+                .When(HttpMethod.Get, moreAbsoluteUrl.ToString())
                 .Respond(this.GetStatementsResponseMessage());
 
             // Act
