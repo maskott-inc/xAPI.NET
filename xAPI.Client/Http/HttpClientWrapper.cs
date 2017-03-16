@@ -234,6 +234,15 @@ namespace xAPI.Client.Http
 
         private void EnsureResponseIsValid(HttpResponseMessage response)
         {
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
+            // The content won't be used, so we don't need it anymore
+            response.Content?.Dispose();
+
+            // Throws appropriate HTTP exception
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 throw new BadRequestException(response.ReasonPhrase);
@@ -268,7 +277,7 @@ namespace xAPI.Client.Http
             }
             else
             {
-                response.EnsureSuccessStatusCode();
+                throw new UnexpectedHttpException(response.StatusCode, response.ReasonPhrase);
             }
         }
 

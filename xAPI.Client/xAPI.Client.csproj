@@ -56,6 +56,7 @@
     <Compile Include="Authenticators\ILRSAuthenticator.cs" />
     <Compile Include="Authenticators\OAuthAuthenticator.cs" />
     <Compile Include="Exceptions\BadRequestException.cs" />
+    <Compile Include="Exceptions\UnexpectedHttpException.cs" />
     <Compile Include="Exceptions\LRSException.cs" />
     <Compile Include="Exceptions\TooManyRequestsException.cs" />
     <Compile Include="Exceptions\EntityTooLargeException.cs" />
