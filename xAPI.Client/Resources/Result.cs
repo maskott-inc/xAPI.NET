@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using xAPI.Client.Validation;
 
 namespace xAPI.Client.Resources
 {
     public class Result
     {
         [JsonProperty("score")]
+        [ValidateProperty]
         public Score Score { get; set; }
 
         [JsonProperty("success")]
@@ -20,6 +22,7 @@ namespace xAPI.Client.Resources
         public string Duration { get; set; }
 
         [JsonProperty("extensions")]
+        [ValidateProperty]
         public Extensions Extensions { get; set; }
     }
 }

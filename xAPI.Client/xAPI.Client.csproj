@@ -35,6 +35,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -62,6 +63,7 @@
     <Compile Include="Exceptions\ConflictException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\HttpException.cs" />
+    <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Exceptions\XApiException.cs" />
     <Compile Include="Http\BaseJsonOptions.cs" />
     <Compile Include="Http\DeleteOptions.cs" />
@@ -125,6 +127,9 @@
     <Compile Include="Resources\InteractionComponent.cs" />
     <Compile Include="Resources\LanguageMap.cs" />
     <Compile Include="Resources\IObjectResource.cs" />
+    <Compile Include="Validation\CompositeValidationResult.cs" />
+    <Compile Include="Validation\ValidatePropertyAttribute.cs" />
+    <Compile Include="Validation\Validator.cs" />
     <Compile Include="XApiClient.cs" />
     <Compile Include="Endpoints\Impl\StatementsApi.cs" />
     <Compile Include="Endpoints\IStatesApi.cs" />

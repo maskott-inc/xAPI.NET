@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using xAPI.Client.Resources;
+using xAPI.Client.Validation;
 
 namespace xAPI.Client.Requests
 {
@@ -19,6 +20,8 @@ namespace xAPI.Client.Requests
             {
                 throw new ArgumentNullException(nameof(this.Statements));
             }
+
+            Validator.Validate(this.Statements);
         }
     }
 }

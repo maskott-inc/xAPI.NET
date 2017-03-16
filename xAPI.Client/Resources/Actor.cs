@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using xAPI.Client.Validation;
 
 namespace xAPI.Client.Resources
 {
@@ -18,6 +19,7 @@ namespace xAPI.Client.Resources
         public Uri OpenId { get; set; }
 
         [JsonProperty("account")]
+        [ValidateProperty]
         public AccountObject Account { get; set; }
 
         public abstract string ObjectType { get; }
