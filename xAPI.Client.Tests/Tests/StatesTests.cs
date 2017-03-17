@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
+using xAPI.Client.Tests.Data;
 
 namespace xAPI.Client.Tests
 {
@@ -449,7 +450,7 @@ namespace xAPI.Client.Tests
                 .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("since", SINCE.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/state/get_many.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.ACTIVITY_STATES));
 
             // Act
             List<string> stateIds = await this._client.States.GetMany(request);
@@ -490,7 +491,7 @@ namespace xAPI.Client.Tests
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.ETag = new EntityTagHeaderValue(ETAG);
-            response.Content = new StringContent(this.ReadDataFile("activities/state/get.json"), Encoding.UTF8, "application/json");
+            response.Content = new StringContent(this.ReadDataFile(Constants.ACTIVITY_STATE), Encoding.UTF8, "application/json");
             response.Content.Headers.LastModified = LAST_MODIFIED;
 
             return response;

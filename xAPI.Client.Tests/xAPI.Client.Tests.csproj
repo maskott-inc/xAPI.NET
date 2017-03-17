@@ -84,6 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Constants.cs" />
     <Compile Include="FluentExtensions\JTokenFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\BaseEndpointTest.cs" />
@@ -105,37 +106,37 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Data\about\get.json">
+    <None Include="Data\about\about.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\activities\get.json">
+    <None Include="Data\activities\activity.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\activities\profile\get.json">
+    <None Include="Data\activities\profile\activity_profile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\activities\profile\get_many.json">
+    <None Include="Data\activities\profile\activity_profiles.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\activities\state\get_many.json">
+    <None Include="Data\activities\state\activity_states.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\activities\state\get.json">
+    <None Include="Data\activities\state\activity_state.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\agents\get.json">
+    <None Include="Data\agents\agent.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\agents\profile\get.json">
+    <None Include="Data\agents\profile\agent_profile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\agents\profile\get_many.json">
+    <None Include="Data\agents\profile\agent_profiles.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\statements\get_many.json">
+    <None Include="Data\statements\statements.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\statements\get.json">
+    <None Include="Data\statements\statement_full.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

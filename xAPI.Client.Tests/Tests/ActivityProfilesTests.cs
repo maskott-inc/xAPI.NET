@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
+using xAPI.Client.Tests.Data;
 
 namespace xAPI.Client.Tests
 {
@@ -341,7 +342,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("activities/profile"))
                 .WithQueryString("activityId", ACTIVITY_ID)
                 .WithQueryString("since", SINCE.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/profile/get_many.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.ACTIVITY_PROFILES));
 
             // Act
             List<string> stateIds = await this._client.ActivityProfiles.GetMany(request);
@@ -354,7 +355,7 @@ namespace xAPI.Client.Tests
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.ETag = new EntityTagHeaderValue(ETAG);
-            response.Content = new StringContent(this.ReadDataFile("activities/profile/get.json"), Encoding.UTF8, "application/json");
+            response.Content = new StringContent(this.ReadDataFile(Constants.ACTIVITY_PROFILE), Encoding.UTF8, "application/json");
             response.Content.Headers.LastModified = LAST_MODIFIED;
 
             return response;

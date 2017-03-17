@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using xAPI.Client.Configuration;
 using xAPI.Client.Resources;
+using xAPI.Client.Tests.Data;
 
 namespace xAPI.Client.Tests
 {
@@ -23,7 +24,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("about"))
                 .WithHeaders("X-Experience-API-Version", VERSION)
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("about/get.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.ABOUT));
 
             // Act
             About about = await this._client.About.Get();

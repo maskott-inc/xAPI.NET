@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
+using xAPI.Client.Tests.Data;
 
 namespace xAPI.Client.Tests
 {
@@ -26,7 +27,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("activities"))
                 .WithQueryString("activityId", ACTIVITY_ID)
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("activities/get.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.ACTIVITY));
 
             // Act
             Activity activity = await this._client.Activities.Get(request);

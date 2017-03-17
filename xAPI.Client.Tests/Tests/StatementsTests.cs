@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
+using xAPI.Client.Tests.Data;
 
 namespace xAPI.Client.Tests
 {
@@ -39,7 +40,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
                 .WithQueryString("statementId", STATEMENT_ID.ToString())
                 .WithHeaders("Accept-Language", "*")
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.STATEMENT_FULL));
 
             // Act
             Statement statement = await this._client.Statements.Get(request);
@@ -85,7 +86,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
                 .WithQueryString("voidedStatementId", STATEMENT_ID.ToString())
                 .WithHeaders("Accept-Language", "*")
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("statements/get.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.STATEMENT_FULL));
 
             // Act
             Statement statement = await this._client.Statements.Get(request);
@@ -368,7 +369,7 @@ namespace xAPI.Client.Tests
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.Add(XAPI_CONSISTENT_THROUGH_HEADER, XAPI_CONSISTENT_THROUGH_VALUE);
-            response.Content = new StringContent(this.ReadDataFile("statements/get_many.json"), Encoding.UTF8, "application/json");
+            response.Content = new StringContent(this.ReadDataFile(Constants.STATEMENTS), Encoding.UTF8, "application/json");
 
             return response;
         }

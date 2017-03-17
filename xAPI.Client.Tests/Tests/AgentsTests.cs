@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
+using xAPI.Client.Tests.Data;
 
 namespace xAPI.Client.Tests
 {
@@ -32,7 +33,7 @@ namespace xAPI.Client.Tests
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("agents"))
                 .WithQueryString("agent", AGENT_QS)
-                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile("agents/get.json"));
+                .Respond(HttpStatusCode.OK, "application/json", this.ReadDataFile(Constants.AGENT));
 
             // Act
             Person actor = await this._client.Agents.Get(request);
