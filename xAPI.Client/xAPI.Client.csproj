@@ -69,6 +69,7 @@
     <Compile Include="Exceptions\XApiException.cs" />
     <Compile Include="Http\RequestOptions.cs" />
     <Compile Include="Http\HttpClientWrapper.cs" />
+    <Compile Include="Json\Constants.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
     <Compile Include="Json\StrictJsonMediaTypeFormatter.cs" />
     <Compile Include="Requests\AAgentProfileRequest.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Resources\InteractionComponent.cs" />
     <Compile Include="Resources\LanguageMap.cs" />
     <Compile Include="Resources\IObjectResource.cs" />
+    <Compile Include="Utils\EnumHelper.cs" />
     <Compile Include="Validation\CompositeValidationResult.cs" />
     <Compile Include="Validation\ValidatePropertyAttribute.cs" />
     <Compile Include="Validation\Validator.cs" />

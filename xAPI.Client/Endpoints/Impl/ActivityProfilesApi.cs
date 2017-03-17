@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http;
 using xAPI.Client.Http.Options;
+using xAPI.Client.Json;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -183,7 +184,7 @@ namespace xAPI.Client.Endpoints.Impl
             options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
             if (request.Since.HasValue)
             {
-                options.QueryStringParameters.Add("since", request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                options.QueryStringParameters.Add("since", request.Since.Value.ToString(Constants.DATETIME_FORMAT));
             }
         }
 

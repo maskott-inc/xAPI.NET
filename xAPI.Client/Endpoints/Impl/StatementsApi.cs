@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http;
 using xAPI.Client.Http.Options;
+using xAPI.Client.Json;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
+using xAPI.Client.Utils;
 
 namespace xAPI.Client.Endpoints.Impl
 {
@@ -173,7 +175,55 @@ namespace xAPI.Client.Endpoints.Impl
 
         private void CompleteOptions(RequestOptions options, GetStatementsRequest request)
         {
-            //TODO
+            if (request.Agent != null)
+            {
+                string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
+                options.QueryStringParameters.Add("agent", agentStr);
+            }
+            if (request.Verb != null)
+            {
+                options.QueryStringParameters.Add("verb", request.Verb.ToString());
+            }
+            if (request.ActivityId != null)
+            {
+                options.QueryStringParameters.Add("activity", request.ActivityId.ToString());
+            }
+            if (request.Registration.HasValue)
+            {
+                options.QueryStringParameters.Add("registration", request.Registration.Value.ToString());
+            }
+            if (request.RelatedActivities)
+            {
+                options.QueryStringParameters.Add("related_activities", bool.TrueString.ToLowerInvariant());
+            }
+            if (request.RelatedAgents)
+            {
+                options.QueryStringParameters.Add("related_agents", bool.TrueString.ToLowerInvariant());
+            }
+            if (request.Since.HasValue)
+            {
+                options.QueryStringParameters.Add("since", request.Since.Value.ToString(Constants.DATETIME_FORMAT));
+            }
+            if (request.Until.HasValue)
+            {
+                options.QueryStringParameters.Add("until", request.Since.Value.ToString(Constants.DATETIME_FORMAT));
+            }
+            if (request.Limit > 0)
+            {
+                options.QueryStringParameters.Add("limit", request.Limit.ToString());
+            }
+            if (request.Format != StatementFormat.Exact)
+            {
+                options.QueryStringParameters.Add("format", EnumHelper.ToEnumString(request.Format));
+            }
+            if (request.Attachments)
+            {
+                options.QueryStringParameters.Add("attachments", bool.TrueString.ToLowerInvariant());
+            }
+            if (request.Ascending)
+            {
+                options.QueryStringParameters.Add("ascending", bool.TrueString.ToLowerInvariant());
+            }
 
             foreach (string language in request.GetAcceptedLanguages())
             {

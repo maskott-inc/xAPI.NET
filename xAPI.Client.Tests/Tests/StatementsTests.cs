@@ -25,8 +25,13 @@ namespace xAPI.Client.Tests
         private const string AGENT_MBOX = "mailto:test@example.org";
         private const string VERB = "http://www.example.org/verb";
         private const string MORE = "more?foo=bar";
+        private static readonly Guid REGISTRATION = Guid.NewGuid();
+        private const string SINCE = "2017-01-01T00:00:00.000Z";
+        private const string UNTIL = "2017-01-01T00:00:00.000Z";
+        private const uint LIMIT = 10;
         private const string XAPI_CONSISTENT_THROUGH_HEADER = "X-Experience-API-Consistent-Through";
         private const string XAPI_CONSISTENT_THROUGH_VALUE = "2017-01-01T00:00:00Z";
+        private static readonly string AGENT_QS = $"{{\"objectType\":\"Agent\",\"name\":\"{AGENT_NAME}\",\"mbox\":\"{AGENT_MBOX}\"}}";
 
         [Test]
         public async Task can_get_single_statement()
@@ -170,6 +175,7 @@ namespace xAPI.Client.Tests
             // Assert
             result.Should().BeTrue();
         }
+
         [Test]
         public async Task can_post_new_statement()
         {
@@ -242,16 +248,41 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
-        public async Task can_get_many_statements()
+        public async Task can_get_many_statements_without_attachments()
         {
             // Arrange
             var request = new GetStatementsRequest()
             {
-                ActivityId = new Uri(ACTIVITY_ID)
+                Agent = new Agent()
+                {
+                    Name = AGENT_NAME,
+                    MBox = new Uri(AGENT_MBOX)
+                },
+                Verb = new Uri(VERB),
+                ActivityId = new Uri(ACTIVITY_ID),
+                Registration = REGISTRATION,
+                RelatedActivities = true,
+                RelatedAgents = true,
+                Since = DateTimeOffset.Parse(SINCE),
+                Until = DateTimeOffset.Parse(UNTIL),
+                Limit = LIMIT,
+                Format = StatementFormat.Canonical,
+                Attachments = false,
+                Ascending = true
             };
             this._mockHttp
                 .When(HttpMethod.Get, this.GetApiUrl("statements"))
-                .WithQueryString("activityId", ACTIVITY_ID)
+                .WithQueryString("agent", AGENT_QS)
+                .WithQueryString("verb", VERB)
+                .WithQueryString("activity", ACTIVITY_ID)
+                .WithQueryString("registration", REGISTRATION.ToString())
+                .WithQueryString("related_activities", "true")
+                .WithQueryString("related_agents", "true")
+                .WithQueryString("since", SINCE)
+                .WithQueryString("until", UNTIL)
+                .WithQueryString("limit", LIMIT.ToString())
+                .WithQueryString("format", "canonical")
+                .WithQueryString("ascending", "true")
                 .WithHeaders("Accept-Language", "*")
                 .Respond(this.GetStatementsResponseMessage());
 
@@ -261,7 +292,7 @@ namespace xAPI.Client.Tests
             // Assert
             result.Should().NotBeNull();
             result.Statements.Should().NotBeNullOrEmpty();
-            result.More.Should().Be(new Uri(MORE));
+            result.More.Should().Be(new Uri(MORE, UriKind.Relative));
             result.ConsistentThrough.Should().Be(DateTimeOffset.Parse(XAPI_CONSISTENT_THROUGH_VALUE));
         }
 
