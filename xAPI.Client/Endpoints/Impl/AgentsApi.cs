@@ -28,9 +28,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
+            var options = new RequestOptions(ENDPOINT);
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            string url = string.Format("{0}?agent={1}", ENDPOINT, Uri.EscapeDataString(agentStr));
-            return await this._client.GetJson<Person>(url, new GetJsonOptions());
+            options.QueryStringParameters.Add("agent", agentStr);
+
+            HttpResult<Person> result = await this._client.GetJson<Person>(options);
+            return result.Content;
         }
 
         #endregion

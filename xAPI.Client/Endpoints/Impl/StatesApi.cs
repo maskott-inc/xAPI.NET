@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http;
@@ -31,9 +31,16 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
+
+            HttpResult<JToken> result = await this._client.GetJson<JToken>(options);
+
             var document = new StateDocument();
-            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
+            document.ETag = result.Headers.ETag?.Tag;
+            document.LastModified = result.ContentHeaders.LastModified;
+            document.Content = result.Content;
+
             return document;
         }
 
@@ -45,9 +52,16 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
-            var document = Activator.CreateInstance<StateDocument<T>>();
-            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
+
+            HttpResult<T> result = await this._client.GetJson<T>(options);
+
+            var document = new StateDocument<T>();
+            document.ETag = result.Headers.ETag?.Tag;
+            document.LastModified = result.ContentHeaders.LastModified;
+            document.Content = result.Content;
+
             return document;
         }
 
@@ -59,11 +73,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.PutJsonDocument(url, new PutJsonDocumentOptions(), request.State);
+                HttpResult result = await this._client.PutJson(options, request.State);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -80,11 +95,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.PostJsonDocument(url, new PostJsonDocumentOptions(), request.State);
+                HttpResult result = await this._client.PostJson(options, request.State);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -101,11 +117,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.Delete(url, new DeleteOptions() { ETag = request.ETag });
+                HttpResult result = await this._client.Delete(options);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -122,9 +139,11 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
-            return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
+            HttpResult<List<string>> result = await this._client.GetJson<List<string>>(options);
+            return result.Content;
         }
 
         async Task IStatesApi.DeleteMany(DeleteStatesRequest request)
@@ -135,60 +154,87 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
-            await this._client.Delete(url, new DeleteOptions());
+            HttpResult result = await this._client.Delete(options);
         }
 
         #endregion
 
         #region Utils
 
-        private string BuildUrl(ASingleStateRequest request)
+        private void CompleteOptionsBase(RequestOptions options, ASingleStateRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
-            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
+            options.QueryStringParameters.Add("agent", agentStr);
             if (request.Registration.HasValue)
             {
-                builder.AppendFormat("&registration={0}", Uri.EscapeDataString(request.Registration.Value.ToString()));
+                options.QueryStringParameters.Add("registration", request.Registration.Value.ToString());
             }
-            builder.AppendFormat("&stateId={0}", Uri.EscapeDataString(request.StateId));
-
-            return builder.ToString();
+            options.QueryStringParameters.Add("stateId", request.StateId);
         }
 
-        private string BuildUrl(GetStatesRequest request)
+        private void CompleteOptions(RequestOptions options, GetStateRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
-            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            this.CompleteOptionsBase(options, request);
+        }
+
+        private void CompleteOptions<T>(RequestOptions options, PostStateRequest<T> request)
+        {
+            this.CompleteOptionsBase(options, request);
+            this.AddETagHeader(options, request.State.ETag);
+        }
+
+        private void CompleteOptions<T>(RequestOptions options, PutStateRequest<T> request)
+        {
+            this.CompleteOptionsBase(options, request);
+            this.AddETagHeader(options, request.State.ETag);
+        }
+
+        private void CompleteOptions(RequestOptions options, DeleteStateRequest request)
+        {
+            this.CompleteOptionsBase(options, request);
+            this.AddETagHeader(options, request.ETag);
+        }
+
+        private void CompleteOptions(RequestOptions options, GetStatesRequest request)
+        {
+            options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
+            options.QueryStringParameters.Add("agent", agentStr);
             if (request.Registration.HasValue)
             {
-                builder.AppendFormat("&registration={0}", Uri.EscapeDataString(request.Registration.Value.ToString()));
+                options.QueryStringParameters.Add("registration", request.Registration.Value.ToString());
             }
             if (request.Since.HasValue)
             {
-                builder.AppendFormat("&since={0}", Uri.EscapeDataString(request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")));
+                options.QueryStringParameters.Add("since", request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
             }
-
-            return builder.ToString();
         }
 
-        private string BuildUrl(DeleteStatesRequest request)
+        private void CompleteOptions(RequestOptions options, DeleteStatesRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
-            builder.AppendFormat("?activityId={0}", Uri.EscapeDataString(request.ActivityId.ToString()));
+            options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            builder.AppendFormat("&agent={0}", Uri.EscapeDataString(agentStr));
+            options.QueryStringParameters.Add("agent", agentStr);
             if (request.Registration.HasValue)
             {
-                builder.AppendFormat("&registration={0}", Uri.EscapeDataString(request.Registration.Value.ToString()));
+                options.QueryStringParameters.Add("registration", request.Registration.Value.ToString());
             }
+        }
 
-            return builder.ToString();
+        private void AddETagHeader(RequestOptions options, string etag)
+        {
+            if (!string.IsNullOrEmpty(etag))
+            {
+                options.CustomHeaders.Add("If-Match", etag);
+            }
+            else
+            {
+                options.CustomHeaders.Add("If-None-Match", "*");
+            }
         }
 
         #endregion

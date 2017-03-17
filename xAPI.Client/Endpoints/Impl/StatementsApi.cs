@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http;
@@ -34,8 +33,11 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
-            return await this._client.GetJson<Statement>(url, new GetJsonOptions() { AcceptedLanguages = request.GetAcceptedLanguages() });
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
+
+            HttpResult<Statement> result = await this._client.GetJson<Statement>(options);
+            return result.Content;
         }
 
         async Task<bool> IStatementsApi.Put(PutStatementRequest request)
@@ -46,11 +48,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT) { NullValueHandling = NullValueHandling.Ignore };
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.PutJson(url, new PutJsonOptions() { NullValueHandling = NullValueHandling.Ignore }, request.Statement);
+                await this._client.PutJson(options, request.Statement);
                 return true;
             }
             catch (ConflictException)
@@ -67,11 +70,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT) { NullValueHandling = NullValueHandling.Ignore };
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.PostJson(url, new PostJsonOptions() { NullValueHandling = NullValueHandling.Ignore }, request.Statement);
+                await this._client.PostJson(options, request.Statement);
                 return true;
             }
             catch (ConflictException)
@@ -88,12 +92,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
-            return await this._client.GetJson<StatementResult>(
-                url: url,
-                options: new GetJsonOptions() { AcceptedLanguages = request.GetAcceptedLanguages() },
-                onResponse: this.CompleteStatementResults
-            );
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
+
+            HttpResult<StatementResult> result = await this._client.GetJson<StatementResult>(options);
+            result.Content.ConsistentThrough = this.GetConsistentThroughHeader(result.Headers);
+            return result.Content;
         }
 
         async Task<StatementResult> IStatementsApi.GetMore(Uri more)
@@ -107,12 +111,12 @@ namespace xAPI.Client.Endpoints.Impl
                 throw new ArgumentException("The URI must be relative", nameof(more));
             }
 
-            string url = this.BuildUrl(more);
-            return await this._client.GetJson<StatementResult>(
-                url: url,
-                options: new GetJsonOptions() { },
-                onResponse: this.CompleteStatementResults
-            );
+            string endpoint = $"/{more.ToString().TrimStart('/')}";
+            var options = new RequestOptions(endpoint);
+
+            HttpResult<StatementResult> result = await this._client.GetJson<StatementResult>(options);
+            result.Content.ConsistentThrough = this.GetConsistentThroughHeader(result.Headers);
+            return result.Content;
         }
 
         async Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
@@ -130,52 +134,46 @@ namespace xAPI.Client.Endpoints.Impl
 
         #region Utils
 
-        private string BuildUrl(GetStatementRequest request)
+        private void CompleteOptions(RequestOptions options, GetStatementRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
             if (request.StatementId.HasValue)
             {
-                builder.AppendFormat("?statementId={0}", Uri.EscapeDataString(request.StatementId.Value.ToString()));
+                options.QueryStringParameters.Add("statementId", request.StatementId.Value.ToString());
             }
-            else
+            if (request.VoidedStatementId.HasValue)
             {
-                builder.AppendFormat("?voidedStatementId={0}", Uri.EscapeDataString(request.VoidedStatementId.Value.ToString()));
+                options.QueryStringParameters.Add("voidedStatementId", request.VoidedStatementId.Value.ToString());
             }
-            return builder.ToString();
+
+            foreach (string language in request.GetAcceptedLanguages())
+            {
+                options.CustomHeaders.Add("Accept-Language", language);
+            }
         }
 
-        private string BuildUrl(PutStatementRequest request)
+        private void CompleteOptions(RequestOptions options, PutStatementRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
-            builder.AppendFormat("?statementId={0}", Uri.EscapeDataString(request.Statement.Id.ToString()));
-            return builder.ToString();
+            options.QueryStringParameters.Add("statementId", request.Statement.Id.ToString());
         }
 
-        private string BuildUrl(PostStatementRequest request)
+        private void CompleteOptions(RequestOptions options, PostStatementRequest request)
         {
-            return ENDPOINT;
         }
 
-        private string BuildUrl(GetStatementsRequest request)
+        private void CompleteOptions(RequestOptions options, GetStatementsRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
-
             //TODO
 
-            return builder.ToString();
+            foreach (string language in request.GetAcceptedLanguages())
+            {
+                options.CustomHeaders.Add("Accept-Language", language);
+            }
         }
 
-        private string BuildUrl(Uri more)
-        {
-            // Forcing the slash at the start of the path makes it
-            // absolute, as required by the spec
-            return $"/{more.ToString().TrimStart('/')}";
-        }
-
-        private void CompleteStatementResults(HttpResponseMessage response, StatementResult result)
+        private DateTimeOffset GetConsistentThroughHeader(HttpResponseHeaders headers)
         {
             IEnumerable<string> values;
-            if (!response.Headers.TryGetValues(XAPI_CONSISTENT_THROUGH_HEADER, out values))
+            if (!headers.TryGetValues(XAPI_CONSISTENT_THROUGH_HEADER, out values))
             {
                 throw new LRSException($"Header {XAPI_CONSISTENT_THROUGH_HEADER} is missing from LRS response");
             }
@@ -187,7 +185,7 @@ namespace xAPI.Client.Endpoints.Impl
                 throw new LRSException($"Header {XAPI_CONSISTENT_THROUGH_HEADER} is not in a valid DateTime format");
             }
 
-            result.ConsistentThrough = date;
+            return date;
         }
 
         #endregion

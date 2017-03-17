@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http;
@@ -25,15 +25,16 @@ namespace xAPI.Client.Endpoints.Impl
 
         async Task<AgentProfileDocument> IAgentProfilesApi.Get(GetAgentProfileRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            request.Validate();
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
-            string url = this.BuildUrl(request);
+            HttpResult<JToken> result = await this._client.GetJson<JToken>(options);
+
             var document = new AgentProfileDocument();
-            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
+            document.ETag = result.Headers.ETag?.Tag;
+            document.LastModified = result.ContentHeaders.LastModified;
+            document.Content = result.Content;
+
             return document;
         }
 
@@ -45,9 +46,16 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
-            var document = Activator.CreateInstance<AgentProfileDocument<T>>();
-            await this._client.GetJsonDocument(url, new GetJsonDocumentOptions(), document);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
+
+            HttpResult<T> result = await this._client.GetJson<T>(options);
+
+            var document = new AgentProfileDocument<T>();
+            document.ETag = result.Headers.ETag?.Tag;
+            document.LastModified = result.ContentHeaders.LastModified;
+            document.Content = result.Content;
+
             return document;
         }
 
@@ -59,11 +67,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.PutJsonDocument(url, new PutJsonDocumentOptions(), request.AgentProfile);
+                HttpResult result = await this._client.PutJson(options, request.AgentProfile);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -80,11 +89,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.PostJsonDocument(url, new PostJsonDocumentOptions(), request.AgentProfile);
+                HttpResult result = await this._client.PostJson(options, request.AgentProfile);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -101,11 +111,12 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
             try
             {
-                await this._client.Delete(url, new DeleteOptions() { ETag = request.ETag });
+                HttpResult result = await this._client.Delete(options);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -122,36 +133,67 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = this.BuildUrl(request);
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
 
-            return await this._client.GetJson<List<string>>(url, new GetJsonOptions());
+            HttpResult<List<string>> result = await this._client.GetJson<List<string>>(options);
+            return result.Content;
         }
 
         #endregion
 
         #region Utils
 
-        private string BuildUrl(ASingleAgentProfileRequest request)
+        private void CompleteOptionsBase(RequestOptions options, ASingleAgentProfileRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
-            builder.AppendFormat("&profileId={0}", Uri.EscapeDataString(request.ProfileId));
-
-            return builder.ToString();
+            options.QueryStringParameters.Add("agent", agentStr);
+            options.QueryStringParameters.Add("profileId", request.ProfileId);
         }
 
-        private string BuildUrl(GetAgentProfilesRequest request)
+        private void CompleteOptions(RequestOptions options, GetAgentProfileRequest request)
         {
-            var builder = new StringBuilder(ENDPOINT);
+            this.CompleteOptionsBase(options, request);
+        }
+
+        private void CompleteOptions<T>(RequestOptions options, PostAgentProfileRequest<T> request)
+        {
+            this.CompleteOptionsBase(options, request);
+            this.AddETagHeader(options, request.AgentProfile.ETag);
+        }
+
+        private void CompleteOptions<T>(RequestOptions options, PutAgentProfileRequest<T> request)
+        {
+            this.CompleteOptionsBase(options, request);
+            this.AddETagHeader(options, request.AgentProfile.ETag);
+        }
+
+        private void CompleteOptions(RequestOptions options, DeleteAgentProfileRequest request)
+        {
+            this.CompleteOptionsBase(options, request);
+            this.AddETagHeader(options, request.ETag);
+        }
+
+        private void CompleteOptions(RequestOptions options, GetAgentProfilesRequest request)
+        {
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            builder.AppendFormat("?agent={0}", Uri.EscapeDataString(agentStr));
+            options.QueryStringParameters.Add("agent", agentStr);
             if (request.Since.HasValue)
             {
-                builder.AppendFormat("&since={0}", Uri.EscapeDataString(request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")));
+                options.QueryStringParameters.Add("since", request.Since.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
             }
+        }
 
-            return builder.ToString();
+        private void AddETagHeader(RequestOptions options, string etag)
+        {
+            if (!string.IsNullOrEmpty(etag))
+            {
+                options.CustomHeaders.Add("If-Match", etag);
+            }
+            else
+            {
+                options.CustomHeaders.Add("If-None-Match", "*");
+            }
         }
 
         #endregion

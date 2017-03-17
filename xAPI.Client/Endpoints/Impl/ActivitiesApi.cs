@@ -28,10 +28,13 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            string url = string.Format("{0}?activityId={1}", ENDPOINT, Uri.EscapeDataString(request.ActivityId.ToString()));
+            var options = new RequestOptions(ENDPOINT);
+            options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
+
             try
             {
-                return await this._client.GetJson<Activity>(url, new GetJsonOptions());
+                HttpResult<Activity> result = await this._client.GetJson<Activity>(options);
+                return result.Content;
             }
             catch (NotFoundException)
             {

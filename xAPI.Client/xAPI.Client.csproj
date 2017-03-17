@@ -67,15 +67,8 @@
     <Compile Include="Exceptions\HttpException.cs" />
     <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Exceptions\XApiException.cs" />
-    <Compile Include="Http\Options\BaseJsonOptions.cs" />
-    <Compile Include="Http\Options\DeleteOptions.cs" />
-    <Compile Include="Http\Options\GetJsonDocumentOptions.cs" />
-    <Compile Include="Http\Options\GetJsonOptions.cs" />
+    <Compile Include="Http\RequestOptions.cs" />
     <Compile Include="Http\HttpClientWrapper.cs" />
-    <Compile Include="Http\Options\PostJsonDocumentOptions.cs" />
-    <Compile Include="Http\Options\PostJsonOptions.cs" />
-    <Compile Include="Http\Options\PutJsonDocumentOptions.cs" />
-    <Compile Include="Http\Options\PutJsonOptions.cs" />
     <Compile Include="Json\ObjectResourceConverter.cs" />
     <Compile Include="Json\StrictJsonMediaTypeFormatter.cs" />
     <Compile Include="Requests\AAgentProfileRequest.cs" />
