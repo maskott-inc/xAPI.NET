@@ -127,7 +127,18 @@ namespace xAPI.Client.Endpoints.Impl
             }
             request.Validate();
 
-            throw new NotImplementedException();
+            var options = new RequestOptions(ENDPOINT);
+            this.CompleteOptions(options, request);
+
+            try
+            {
+                await this._client.PostJson(options, request.Statements);
+                return true;
+            }
+            catch (ConflictException)
+            {
+                return false;
+            }
         }
 
         #endregion
@@ -168,6 +179,10 @@ namespace xAPI.Client.Endpoints.Impl
             {
                 options.CustomHeaders.Add("Accept-Language", language);
             }
+        }
+
+        private void CompleteOptions(RequestOptions options, PostStatementsRequest request)
+        {
         }
 
         private DateTimeOffset GetConsistentThroughHeader(HttpResponseHeaders headers)
