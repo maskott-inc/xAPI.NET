@@ -21,8 +21,7 @@ Install-Package xAPI.NET
 This will install the package and its dependencies ([Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) & [Microsoft.AspNet.WebApi.Client](https://www.asp.net/web-api)). You can also use the integrated NuGet manager panel from Visual Studio.
 
 ### Sample code
-```
-#!c#
+```csharp
 // Gather xAPI configuration from somewhere safe!
 string ENDPOINT_URI = "https://www.example.org/xAPI/";
 string VERSION = "1.0.3";
@@ -33,6 +32,8 @@ string PASSWORD = "demo";
 // Currently, only anonymous clients and Basic HTTP are supported.
 var config = new BasicEndpointConfiguration()
 {
+    EndpointUri = new Uri(ENDPOINT_URI),
+    Version = XApiVersion.Parse(VERSION),
     Username = USERNAME,
     Password = PASSWORD
 };
@@ -40,8 +41,53 @@ var config = new BasicEndpointConfiguration()
 // Create the client
 IXApiClient client = XApiClientFactory.Create(config);
 
-// Call the LRS!
+// About resource
 About about = await this._client.About.Get();
+Console.WriteLine(string.Join(", ", about.Versions));
+
+// Activity profile resource
+var request = new GetActivityProfileRequest()
+{
+    ActivityId = new Uri("http://www.example.org/activity"),
+    ProfileId = "<profile_id>"
+};
+ActivityProfileDocument<CustomContent> activityProfile = await this._client.ActivityProfiles.Get<CustomContent>(request);
+Console.WriteLine(activityProfile.Content.CustomField);
+
+// Statement resource
+var statement = new Statement()
+{
+    Id = Guid.NewGuid(),
+    Actor = new Agent()
+    {
+        Name = "student",
+        MBox = new Uri("mailto:student@example.org")
+    },
+    Verb = new Verb()
+    {
+        Id = new Uri("http://adlnet.gov/expapi/verbs/attended"),
+        Display = new LanguageMap() { { "en-US", "attended" } }
+    },
+    Object = new Activity()
+    {
+        Id = new Uri("http://www.example.com/meetings/occurances/34534"),
+        Definition = new ActivityDefinition()
+        {
+            Name = new LanguageMap() { { "en-US", "example meeting" } },
+            Type = new Uri("http://adlnet.gov/expapi/activities/meeting")
+        }
+    }
+};
+var request = new PostStatementRequest(statement);
+bool statementCreated = await this._client.Statements.Post(request);
+if (statementCreated)
+{
+    Console.WriteLine("Statement was successfully created!");
+}
+else
+{
+    Console.WriteLine("A statement with this ID already exists.");
+}
 ```
 
 ## Running the tests
