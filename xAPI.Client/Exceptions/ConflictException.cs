@@ -1,18 +1,15 @@
-﻿using System;
-
-namespace xAPI.Client.Exceptions
+﻿namespace xAPI.Client.Exceptions
 {
+    /// <summary>
+    /// HttpException thrown when receiving a 409 status code from the LRS.
+    /// </summary>
     public class ConflictException : HttpException
     {
-        public ConflictException()
-        {
-        }
-
+        /// <summary>
+        /// Creates a new instance of HttpException.
+        /// </summary>
+        /// <param name="message">The exception's message.</param>
         public ConflictException(string message) : base(message)
-        {
-        }
-
-        public ConflictException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

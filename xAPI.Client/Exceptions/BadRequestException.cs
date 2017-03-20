@@ -1,18 +1,15 @@
-﻿using System;
-
-namespace xAPI.Client.Exceptions
+﻿namespace xAPI.Client.Exceptions
 {
+    /// <summary>
+    /// HttpException thrown when receiving a 400 status code from the LRS.
+    /// </summary>
     public class BadRequestException : HttpException
     {
-        public BadRequestException()
-        {
-        }
-
+        /// <summary>
+        /// Creates a new instance of HttpException.
+        /// </summary>
+        /// <param name="message">The exception's message.</param>
         public BadRequestException(string message) : base(message)
-        {
-        }
-
-        public BadRequestException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

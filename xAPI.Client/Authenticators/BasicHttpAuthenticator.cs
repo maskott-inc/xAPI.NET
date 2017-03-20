@@ -5,11 +5,20 @@ using xAPI.Client.Configuration;
 
 namespace xAPI.Client.Authenticators
 {
+    /// <summary>
+    /// This authenticator provides authentication through Basic HTTP
+    /// credentials, i.e. "Authorization: Basic {b64(username:password)}".
+    /// </summary>
     public class BasicHttpAuthenticator : ILRSAuthenticator
     {
         private readonly string _username;
         private readonly string _password;
 
+        /// <summary>
+        /// Creates a new instance of BasicHttpAuthenticator using the
+        /// given configuration.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
         public BasicHttpAuthenticator(BasicEndpointConfiguration config)
         {
             if (config == null)

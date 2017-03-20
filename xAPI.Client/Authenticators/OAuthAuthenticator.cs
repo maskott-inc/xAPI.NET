@@ -4,11 +4,21 @@ using xAPI.Client.Configuration;
 
 namespace xAPI.Client.Authenticators
 {
+    /// <summary>
+    /// This authenticator provides authentication through OAuth's Bearer
+    /// scheme. It maintains a local access token cache, and renews the token
+    /// only when it is expired.
+    /// </summary>
     public class OAuthAuthenticator : ILRSAuthenticator
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
 
+        /// <summary>
+        /// Creates a new instance of BasicHttpAuthenticator using the
+        /// given configuration.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
         public OAuthAuthenticator(OAuthEndpointConfiguration config)
         {
             if (config == null)

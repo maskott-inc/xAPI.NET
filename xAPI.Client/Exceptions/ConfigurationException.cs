@@ -1,18 +1,15 @@
-﻿using System;
-
-namespace xAPI.Client.Exceptions
+﻿namespace xAPI.Client.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when the xAPI client is not properly configured.
+    /// </summary>
     public class ConfigurationException : XApiException
     {
-        public ConfigurationException()
-        {
-        }
-
+        /// <summary>
+        /// Creates a new instance of HttpException.
+        /// </summary>
+        /// <param name="message">The exception's message.</param>
         public ConfigurationException(string message) : base(message)
-        {
-        }
-
-        public ConfigurationException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

@@ -1,18 +1,15 @@
-﻿using System;
-
-namespace xAPI.Client.Exceptions
+﻿namespace xAPI.Client.Exceptions
 {
+    /// <summary>
+    /// HttpException thrown when receiving a 429 status code from the LRS.
+    /// </summary>
     public class TooManyRequestsException : HttpException
     {
-        public TooManyRequestsException()
-        {
-        }
-
+        /// <summary>
+        /// Creates a new instance of HttpException.
+        /// </summary>
+        /// <param name="message">The exception's message.</param>
         public TooManyRequestsException(string message) : base(message)
-        {
-        }
-
-        public TooManyRequestsException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }
