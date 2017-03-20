@@ -56,6 +56,27 @@ namespace xAPI.Client.Tests
         }
 
         [Test]
+        public async Task cannot_get_single_statement_when_it_does_not_exist()
+        {
+            // Arrange
+            var request = new GetStatementRequest()
+            {
+                StatementId = STATEMENT_ID_2
+            };
+            this._mockHttp
+                .When(HttpMethod.Get, this.GetApiUrl("statements"))
+                .WithQueryString("statementId", STATEMENT_ID_2.ToString())
+                .WithHeaders("Accept-Language", "*")
+                .Respond(HttpStatusCode.NotFound);
+
+            // Act
+            Statement statement = await this._client.Statements.Get(request);
+
+            // Assert
+            statement.Should().BeNull();
+        }
+
+        [Test]
         public void cannot_get_single_statement_when_unauthorized()
         {
             // Arrange
@@ -184,7 +205,7 @@ namespace xAPI.Client.Tests
             var request = new PostStatementRequest(statement);
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("statements"))
-                .Respond(HttpStatusCode.NoContent);
+                .Respond(HttpStatusCode.OK, "application/json", $"[\"{STATEMENT_ID}\"]");
 
             // Act
             bool result = await this._client.Statements.Post(request);
@@ -238,7 +259,7 @@ namespace xAPI.Client.Tests
             var request = new PostStatementRequest(statement);
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("statements"))
-                .Respond(HttpStatusCode.NoContent);
+                .Respond(HttpStatusCode.OK, "application/json", $"[\"{STATEMENT_ID}\"]");
 
             // Act
             bool result = await this._client.Statements.Post(request);
@@ -325,7 +346,7 @@ namespace xAPI.Client.Tests
             var request = new PostStatementsRequest(statements);
             this._mockHttp
                 .When(HttpMethod.Post, this.GetApiUrl("statements"))
-                .Respond(HttpStatusCode.NoContent);
+                .Respond(HttpStatusCode.OK, "application/json", $"[\"{STATEMENT_ID}\",\"{STATEMENT_ID_2}\"]");
 
             // Act
             bool result = await this._client.Statements.PostMany(request);

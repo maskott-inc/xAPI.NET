@@ -352,6 +352,7 @@ namespace xAPI.Client.Tests
                 .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
+                .With(x => x.Headers.IfNoneMatch.Count == 0 && x.Headers.IfMatch.Count == 0)
                 .Respond(HttpStatusCode.NoContent);
 
             // Act

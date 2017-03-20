@@ -268,6 +268,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Delete, this.GetApiUrl("activities/profile"))
                 .WithQueryString("activityId", ACTIVITY_ID)
                 .WithQueryString("profileId", PROFILE_ID)
+                .With(x => x.Headers.IfNoneMatch.Count == 0 && x.Headers.IfMatch.Count == 0)
                 .Respond(HttpStatusCode.NoContent);
 
             // Act
