@@ -8,7 +8,6 @@ using xAPI.Client.Authenticators;
 using xAPI.Client.Configuration;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http.Options;
-using xAPI.Client.Json;
 using xAPI.Client.Resources;
 
 namespace xAPI.Client.Http
@@ -21,10 +20,8 @@ namespace xAPI.Client.Http
 
         #region IHttpClientWrapper members
 
-        async Task<HttpResult<T>> IHttpClientWrapper.GetJson<T>(RequestOptions options)
+        async Task<HttpResponseMessage> IHttpClientWrapper.GetJson(RequestOptions options)
         {
-            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
-
             // Initialize request
             var request = new HttpRequestMessage(HttpMethod.Get, options.Url);
             await this.SetAuthorizationHeader(request);
@@ -35,58 +32,40 @@ namespace xAPI.Client.Http
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
-            // Parse content
-            T content = await response.Content.ReadAsAsync<T>(new[] { formatter });
-
-            return new HttpResult<T>()
-            {
-                Headers = response.Headers,
-                ContentHeaders = response.Content.Headers,
-                Content = content
-            };
+            return response;
         }
 
-        async Task<HttpResult> IHttpClientWrapper.PutJson<T>(RequestOptions options, T content)
+        async Task<HttpResponseMessage> IHttpClientWrapper.PutJson<T>(RequestOptions options, T content)
         {
-            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
-
             // Initialize request
             var request = new HttpRequestMessage(HttpMethod.Put, options.Url);
             await this.SetAuthorizationHeader(request);
             this.SetCustomHeaders(request, options);
-            request.Content = new ObjectContent<T>(content, formatter);
+            request.Content = new ObjectContent<T>(content, options.GetFormatter());
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
-            return new HttpResult()
-            {
-                Headers = response.Headers
-            };
+            return response;
         }
 
-        async Task<HttpResult> IHttpClientWrapper.PostJson<T>(RequestOptions options, T content)
+        async Task<HttpResponseMessage> IHttpClientWrapper.PostJson<T>(RequestOptions options, T content)
         {
-            StrictJsonMediaTypeFormatter formatter = this.GetFormatter(options);
-
             // Initialize request
             var request = new HttpRequestMessage(HttpMethod.Post, options.Url);
             await this.SetAuthorizationHeader(request);
             this.SetCustomHeaders(request, options);
-            request.Content = new ObjectContent<T>(content, formatter);
+            request.Content = new ObjectContent<T>(content, options.GetFormatter());
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
-            return new HttpResult()
-            {
-                Headers = response.Headers
-            };
+            return response;
         }
 
-        async Task<HttpResult> IHttpClientWrapper.Delete(RequestOptions options)
+        async Task<HttpResponseMessage> IHttpClientWrapper.Delete(RequestOptions options)
         {
             // Handle specific headers
             var request = new HttpRequestMessage(HttpMethod.Delete, options.Url);
@@ -97,10 +76,7 @@ namespace xAPI.Client.Http
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
             this.EnsureResponseIsValid(response);
 
-            return new HttpResult()
-            {
-                Headers = response.Headers
-            };
+            return response;
         }
 
         #endregion
@@ -143,13 +119,6 @@ namespace xAPI.Client.Http
         #endregion
 
         #region Utils
-
-        private StrictJsonMediaTypeFormatter GetFormatter(RequestOptions options)
-        {
-            var formatter = new StrictJsonMediaTypeFormatter();
-            formatter.SerializerSettings.NullValueHandling = options.NullValueHandling;
-            return formatter;
-        }
 
         private async Task SetAuthorizationHeader(HttpRequestMessage request)
         {

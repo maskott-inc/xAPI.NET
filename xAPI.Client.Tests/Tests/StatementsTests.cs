@@ -208,10 +208,10 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.OK, "application/json", $"[\"{STATEMENT_ID}\"]");
 
             // Act
-            bool result = await this._client.Statements.Post(request);
+            Guid? result = await this._client.Statements.Post(request);
 
             // Assert
-            result.Should().BeTrue();
+            result.Should().NotBeNull().And.Be(STATEMENT_ID);
         }
 
         [Test]
@@ -225,10 +225,10 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.Conflict);
 
             // Act
-            bool result = await this._client.Statements.Post(request);
+            Guid? result = await this._client.Statements.Post(request);
 
             // Assert
-            result.Should().BeFalse();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -262,10 +262,10 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.OK, "application/json", $"[\"{STATEMENT_ID}\"]");
 
             // Act
-            bool result = await this._client.Statements.Post(request);
+            Guid? result = await this._client.Statements.Post(request);
 
             // Assert
-            result.Should().BeTrue();
+            result.Should().NotBeNull().And.Be(STATEMENT_ID);
         }
 
         [Test]
@@ -349,10 +349,10 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.OK, "application/json", $"[\"{STATEMENT_ID}\",\"{STATEMENT_ID_2}\"]");
 
             // Act
-            bool result = await this._client.Statements.PostMany(request);
+            List<Guid> result = await this._client.Statements.PostMany(request);
 
             // Assert
-            result.Should().BeTrue();
+            result.Should().HaveCount(2).And.Contain(STATEMENT_ID).And.Contain(STATEMENT_ID_2);
         }
 
         [Test]
@@ -366,10 +366,10 @@ namespace xAPI.Client.Tests
                 .Respond(HttpStatusCode.Conflict);
 
             // Act
-            bool result = await this._client.Statements.PostMany(request);
+            List<Guid> result = await this._client.Statements.PostMany(request);
 
             // Assert
-            result.Should().BeFalse();
+            result.Should().BeEmpty();
         }
 
         private Statement GetStatement(Guid id)

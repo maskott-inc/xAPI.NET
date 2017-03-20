@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using xAPI.Client.Http.Options;
 
@@ -6,10 +7,10 @@ namespace xAPI.Client.Http
 {
     internal interface IHttpClientWrapper
     {
-        Task<HttpResult<T>> GetJson<T>(RequestOptions options);
-        Task<HttpResult> PutJson<T>(RequestOptions options, T content);
-        Task<HttpResult> PostJson<T>(RequestOptions options, T content);
-        Task<HttpResult> Delete(RequestOptions options);
+        Task<HttpResponseMessage> GetJson(RequestOptions options);
+        Task<HttpResponseMessage> PutJson<T>(RequestOptions options, T content);
+        Task<HttpResponseMessage> PostJson<T>(RequestOptions options, T content);
+        Task<HttpResponseMessage> Delete(RequestOptions options);
     }
 
     internal class HttpResult

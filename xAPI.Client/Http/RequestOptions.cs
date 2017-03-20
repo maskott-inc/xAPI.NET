@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using xAPI.Client.Json;
 
 namespace xAPI.Client.Http.Options
 {
@@ -38,6 +39,13 @@ namespace xAPI.Client.Http.Options
         public RequestOptions(string path)
         {
             this.Path = path;
+        }
+
+        public StrictJsonMediaTypeFormatter GetFormatter()
+        {
+            var formatter = new StrictJsonMediaTypeFormatter();
+            formatter.SerializerSettings.NullValueHandling = this.NullValueHandling;
+            return formatter;
         }
     }
 }

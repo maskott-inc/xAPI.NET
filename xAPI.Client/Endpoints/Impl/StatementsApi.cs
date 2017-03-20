@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
@@ -38,8 +39,15 @@ namespace xAPI.Client.Endpoints.Impl
             var options = new RequestOptions(ENDPOINT);
             this.CompleteOptions(options, request);
 
-            HttpResult<Statement> result = await this._client.GetJson<Statement>(options);
-            return result.Content;
+            try
+            {
+                HttpResponseMessage response = await this._client.GetJson(options);
+                return await response.Content.ReadAsAsync<Statement>(new[] { new StrictJsonMediaTypeFormatter() });
+            }
+            catch (NotFoundException)
+            {
+                return null;
+            }
         }
 
         async Task<bool> IStatementsApi.Put(PutStatementRequest request)
@@ -64,7 +72,7 @@ namespace xAPI.Client.Endpoints.Impl
             }
         }
 
-        async Task<bool> IStatementsApi.Post(PostStatementRequest request)
+        async Task<Guid?> IStatementsApi.Post(PostStatementRequest request)
         {
             if (request == null)
             {
@@ -77,12 +85,13 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PostJson(options, request.Statement);
-                return true;
+                HttpResponseMessage response = await this._client.PostJson(options, request.Statement);
+                List<Guid> content = await response.Content.ReadAsAsync<List<Guid>>(new[] { new StrictJsonMediaTypeFormatter() });
+                return content?.FirstOrDefault();
             }
             catch (ConflictException)
             {
-                return false;
+                return null;
             }
         }
 
@@ -97,9 +106,10 @@ namespace xAPI.Client.Endpoints.Impl
             var options = new RequestOptions(ENDPOINT);
             this.CompleteOptions(options, request);
 
-            HttpResult<StatementResult> result = await this._client.GetJson<StatementResult>(options);
-            result.Content.ConsistentThrough = this.GetConsistentThroughHeader(result.Headers);
-            return result.Content;
+            HttpResponseMessage response = await this._client.GetJson(options);
+            StatementResult content = await response.Content.ReadAsAsync<StatementResult>(new[] { new StrictJsonMediaTypeFormatter() });
+            content.ConsistentThrough = this.GetConsistentThroughHeader(response.Headers);
+            return content;
         }
 
         async Task<StatementResult> IStatementsApi.GetMore(Uri more)
@@ -116,12 +126,13 @@ namespace xAPI.Client.Endpoints.Impl
             string endpoint = $"/{more.ToString().TrimStart('/')}";
             var options = new RequestOptions(endpoint);
 
-            HttpResult<StatementResult> result = await this._client.GetJson<StatementResult>(options);
-            result.Content.ConsistentThrough = this.GetConsistentThroughHeader(result.Headers);
-            return result.Content;
+            HttpResponseMessage response = await this._client.GetJson(options);
+            StatementResult content = await response.Content.ReadAsAsync<StatementResult>(new[] { new StrictJsonMediaTypeFormatter() });
+            content.ConsistentThrough = this.GetConsistentThroughHeader(response.Headers);
+            return content;
         }
 
-        async Task<bool> IStatementsApi.PostMany(PostStatementsRequest request)
+        async Task<List<Guid>> IStatementsApi.PostMany(PostStatementsRequest request)
         {
             if (request == null)
             {
@@ -134,12 +145,12 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                await this._client.PostJson(options, request.Statements);
-                return true;
+                HttpResponseMessage response = await this._client.PostJson(options, request.Statements);
+                return await response.Content.ReadAsAsync<List<Guid>>(new[] { new StrictJsonMediaTypeFormatter() });
             }
             catch (ConflictException)
             {
-                return false;
+                return new List<Guid>();
             }
         }
 

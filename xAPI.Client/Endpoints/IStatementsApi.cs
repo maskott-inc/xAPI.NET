@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
@@ -11,12 +12,12 @@ namespace xAPI.Client.Endpoints
 
         Task<bool> Put(PutStatementRequest request);
 
-        Task<bool> Post(PostStatementRequest request);
+        Task<Guid?> Post(PostStatementRequest request);
 
         Task<StatementResult> GetMany(GetStatementsRequest request);
 
         Task<StatementResult> GetMore(Uri more);
 
-        Task<bool> PostMany(PostStatementsRequest request);
+        Task<List<Guid>> PostMany(PostStatementsRequest request);
     }
 }

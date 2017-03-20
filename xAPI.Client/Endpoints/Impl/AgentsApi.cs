@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using xAPI.Client.Http;
 using xAPI.Client.Http.Options;
+using xAPI.Client.Json;
 using xAPI.Client.Requests;
 using xAPI.Client.Resources;
 
@@ -32,8 +34,8 @@ namespace xAPI.Client.Endpoints.Impl
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
             options.QueryStringParameters.Add("agent", agentStr);
 
-            HttpResult<Person> result = await this._client.GetJson<Person>(options);
-            return result.Content;
+            HttpResponseMessage response = await this._client.GetJson(options);
+            return await response.Content.ReadAsAsync<Person>(new[] { new StrictJsonMediaTypeFormatter() });
         }
 
         #endregion

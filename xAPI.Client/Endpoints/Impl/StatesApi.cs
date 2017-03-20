@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using xAPI.Client.Exceptions;
 using xAPI.Client.Http;
@@ -35,12 +36,13 @@ namespace xAPI.Client.Endpoints.Impl
             var options = new RequestOptions(ENDPOINT);
             this.CompleteOptions(options, request);
 
-            HttpResult<JToken> result = await this._client.GetJson<JToken>(options);
+            HttpResponseMessage response = await this._client.GetJson(options);
+            JToken content = await response.Content.ReadAsAsync<JToken>(new[] { new StrictJsonMediaTypeFormatter() });
 
             var document = new StateDocument();
-            document.ETag = result.Headers.ETag?.Tag;
-            document.LastModified = result.ContentHeaders.LastModified;
-            document.Content = result.Content;
+            document.ETag = response.Headers.ETag?.Tag;
+            document.LastModified = response.Content.Headers.LastModified;
+            document.Content = content;
 
             return document;
         }
@@ -56,12 +58,13 @@ namespace xAPI.Client.Endpoints.Impl
             var options = new RequestOptions(ENDPOINT);
             this.CompleteOptions(options, request);
 
-            HttpResult<T> result = await this._client.GetJson<T>(options);
+            HttpResponseMessage response = await this._client.GetJson(options);
+            T content = await response.Content.ReadAsAsync<T>(new[] { new StrictJsonMediaTypeFormatter() });
 
             var document = new StateDocument<T>();
-            document.ETag = result.Headers.ETag?.Tag;
-            document.LastModified = result.ContentHeaders.LastModified;
-            document.Content = result.Content;
+            document.ETag = response.Headers.ETag?.Tag;
+            document.LastModified = response.Content.Headers.LastModified;
+            document.Content = content;
 
             return document;
         }
@@ -79,7 +82,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                HttpResult result = await this._client.PutJson(options, request.State);
+                await this._client.PutJson(options, request.State);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -101,7 +104,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                HttpResult result = await this._client.PostJson(options, request.State);
+                await this._client.PostJson(options, request.State);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -123,7 +126,7 @@ namespace xAPI.Client.Endpoints.Impl
 
             try
             {
-                HttpResult result = await this._client.Delete(options);
+                await this._client.Delete(options);
                 return true;
             }
             catch (PreConditionFailedException)
@@ -143,8 +146,8 @@ namespace xAPI.Client.Endpoints.Impl
             var options = new RequestOptions(ENDPOINT);
             this.CompleteOptions(options, request);
 
-            HttpResult<List<string>> result = await this._client.GetJson<List<string>>(options);
-            return result.Content;
+            HttpResponseMessage response = await this._client.GetJson(options);
+            return await response.Content.ReadAsAsync<List<string>>(new[] { new StrictJsonMediaTypeFormatter() });
         }
 
         async Task IStatesApi.DeleteMany(DeleteStatesRequest request)
@@ -158,7 +161,7 @@ namespace xAPI.Client.Endpoints.Impl
             var options = new RequestOptions(ENDPOINT);
             this.CompleteOptions(options, request);
 
-            HttpResult result = await this._client.Delete(options);
+            await this._client.Delete(options);
         }
 
         #endregion
@@ -197,7 +200,10 @@ namespace xAPI.Client.Endpoints.Impl
         private void CompleteOptions(RequestOptions options, DeleteStateRequest request)
         {
             this.CompleteOptionsBase(options, request);
-            this.AddETagHeader(options, request.ETag);
+            if (!string.IsNullOrEmpty(request.ETag))
+            {
+                this.AddETagHeader(options, request.ETag);
+            }
         }
 
         private void CompleteOptions(RequestOptions options, GetStatesRequest request)
