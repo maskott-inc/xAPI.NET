@@ -4,10 +4,17 @@ using xAPI.Client.Validation;
 
 namespace xAPI.Client.Requests
 {
+    /// <summary>
+    /// Class used to POST a single statement from the LRS.
+    /// </summary>
     public class PostStatementRequest : ARequest
     {
-        public Statement Statement { get; set; }
+        internal Statement Statement { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of PostStatementRequest.
+        /// </summary>
+        /// <param name="statement">The statement to POST.</param>
         public PostStatementRequest(Statement statement)
         {
             this.Statement = statement;

@@ -5,10 +5,17 @@ using xAPI.Client.Validation;
 
 namespace xAPI.Client.Requests
 {
+    /// <summary>
+    /// Class used to POST multiple statements to the LRS.
+    /// </summary>
     public class PostStatementsRequest : ARequest
     {
-        public IReadOnlyList<Statement> Statements { get; set; }
+        internal IReadOnlyList<Statement> Statements { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of PostStatementsRequest.
+        /// </summary>
+        /// <param name="statements">The statements to POST.</param>
         public PostStatementsRequest(IReadOnlyList<Statement> statements)
         {
             this.Statements = statements;

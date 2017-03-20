@@ -2,10 +2,19 @@
 
 namespace xAPI.Client.Requests
 {
+    /// <summary>
+    /// Class used to GET a single statement from the LRS.
+    /// </summary>
     public class GetStatementRequest : AGetStatementRequest
     {
+        /// <summary>
+        /// Id of Statement to fetch.
+        /// </summary>
         public Guid? StatementId { get; set; }
 
+        /// <summary>
+        /// Id of voided Statement to fetch.
+        /// </summary>
         public Guid? VoidedStatementId { get; set; }
 
         internal override void Validate()
