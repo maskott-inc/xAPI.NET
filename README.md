@@ -112,6 +112,7 @@ else
 
 * OAuth authentication (currently, the [`OAuthAuthenticator`](xAPI.Client/Authenticators/OAuthAuthenticator.cs) class is not implemented).
 * Attachments in statements ([requests](https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#152-multipartmixed) & [responses](https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#213-get-statements)).
+* Document resources with content types other than `application/json`.
 
 ## Contributing
 1. `git config --global core.autocrlf false`
