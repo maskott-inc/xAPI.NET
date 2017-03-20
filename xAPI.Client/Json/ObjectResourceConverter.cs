@@ -5,7 +5,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Json
 {
-    public class ObjectResourceConverter<T> : JsonConverter where T : IObjectResource
+    internal class ObjectResourceConverter<T> : JsonConverter where T : IObjectResource
     {
         public override bool CanWrite { get { return false; } }
 

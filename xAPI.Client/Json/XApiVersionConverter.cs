@@ -4,7 +4,7 @@ using xAPI.Client.Resources;
 
 namespace xAPI.Client.Json
 {
-    public class XApiVersionConverter : JsonConverter
+    internal class XApiVersionConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
