@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("xAPI.Client")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("xAPI.NET Client")]
+[assembly: AssemblyDescription("xAPI.NET is a free, open-source xAPI client for .NET.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Maskott")]
 [assembly: AssemblyProduct("xAPI.Client")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
