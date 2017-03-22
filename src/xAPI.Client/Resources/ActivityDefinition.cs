@@ -41,7 +41,7 @@ namespace xAPI.Client.Resources
         /// The type of interaction.
         /// </summary>
         [JsonProperty("interactionType")]
-        public string InteractionType { get; set; }
+        public InteractionType? InteractionType { get; set; }
 
         /// <summary>
         /// A pattern representing the correct response to the interaction.

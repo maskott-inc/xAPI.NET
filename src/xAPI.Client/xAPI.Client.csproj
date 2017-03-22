@@ -93,6 +93,7 @@
     <Compile Include="Resources\Extensions.cs" />
     <Compile Include="Resources\Group.cs" />
     <Compile Include="Resources\BaseDocument.cs" />
+    <Compile Include="Resources\InteractionType.cs" />
     <Compile Include="Resources\IStatementTarget.cs" />
     <Compile Include="Resources\Result.cs" />
     <Compile Include="Resources\Score.cs" />
