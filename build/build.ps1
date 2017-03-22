@@ -25,21 +25,11 @@ Function Main
     {
         Prepare-OutputDir
         Start-Transcript "$outputDir\build.log"
-
         Ensure-NuGetExists
         $NuGetVersion = Prompt-NuGetVersion
-        
-        Write-Host "Rebuild solution..." -ForegroundColor Green
         Rebuild-Solution
-        Write-Host "Success!" -ForegroundColor Green
-        
-        Write-Host "Run unit tests..." -ForegroundColor Green
         Run-NUnitTests
-        Write-Host "Success!" -ForegroundColor Green
-        
-        Write-Host "Build NuGet package..." -ForegroundColor Green
         Build-NuGetPackage -NuGetVersion $NuGetVersion
-        Write-Host "Success!" -ForegroundColor Green
     }
     Finally
     {
@@ -89,10 +79,12 @@ function Rebuild-Solution
     [Environment]::SetEnvironmentVariable("EnableNuGetPackageRestore", "true", "Process")
     exec { & $nugetFilePath update -self }
     exec { & $nugetFilePath restore "$solutionFilePath" -verbosity detailed -configfile "$solutionDirPath\nuget.config" | Out-Default } "Error restoring solution"
+    Write-Host "Success!" -ForegroundColor Green
 
     Write-Host
     Write-Host "Building solution" -ForegroundColor Green
     exec { & MSBuild "/t:Clean;Rebuild" "/p:Configuration=Release" "/p:Platform=Any CPU" "/p:PlatformTarget=AnyCPU" "/p:TreatWarningsAsErrors=true" "$solutionFilePath" | Out-Default } "Error building solution"
+    Write-Host "Success!" -ForegroundColor Green
 }
 
 function Run-NUnitTests
@@ -100,6 +92,7 @@ function Run-NUnitTests
     Write-Host
     Write-Host -ForegroundColor Green "Running NUnit tests"
     exec { & $nunitFilePath "$testAssemblyPath" --framework="$targetFramework" --result="$outputDir\$nugetPackageId.xml" | Out-Default } "Error running NUnit tests"
+    Write-Host "Success!" -ForegroundColor Green
 }
 
 function Build-NuGetPackage
@@ -113,10 +106,12 @@ function Build-NuGetPackage
     $xml = [xml](Get-Content $nuspecFilePath)
     Edit-XmlNodes -doc $xml -xpath "//*[local-name() = 'version']" -value $NuGetVersion
     $xml.save($nuspecOutFilePath)
+    Write-Host "Success!" -ForegroundColor Green
 
     Write-Host
     Write-Host -ForegroundColor Green "Building NuGet package " $nugetPackageId
     exec { & $nugetFilePath pack "$nuspecOutFilePath" -outputdirectory "$outputDir" | Out-Default } "Error building NuGet package $nugetPackageId"
+    Write-Host "Success!" -ForegroundColor Green
 }
 
 function Edit-XmlNodes
