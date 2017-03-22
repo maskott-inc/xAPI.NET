@@ -21,23 +21,23 @@ $targetFramework = "net-4.0"
 
 Function Main
 {
-    Start-Transcript "$outputDir\runbuild.log"
-
     Try
     {
-        Ensure-OutputDirExists
+        Prepare-OutputDir
+        Start-Transcript "$outputDir\build.log"
+
         Ensure-NuGetExists
         $NuGetVersion = Prompt-NuGetVersion
         
-        Write-Host "Rebuild solution..." -ForegroundColor Yellow
+        Write-Host "Rebuild solution..." -ForegroundColor Green
         Rebuild-Solution
         Write-Host "Success!" -ForegroundColor Green
         
-        Write-Host "Run unit tests..." -ForegroundColor Yellow
+        Write-Host "Run unit tests..." -ForegroundColor Green
         Run-NUnitTests
         Write-Host "Success!" -ForegroundColor Green
         
-        Write-Host "Build NuGet package..." -ForegroundColor Yellow
+        Write-Host "Build NuGet package..." -ForegroundColor Green
         Build-NuGetPackage -NuGetVersion $NuGetVersion
         Write-Host "Success!" -ForegroundColor Green
     }
@@ -47,11 +47,15 @@ Function Main
     }
 }
 
-function Ensure-OutputDirExists
+function Prepare-OutputDir
 {
     if (!(Test-Path "$outputDir"))
     {
         New-Item -ItemType Directory -Force -Path $outputDir
+    }
+    else
+    {
+        Remove-Item -Path "$outputDir\*"
     }
 }
 
@@ -70,13 +74,12 @@ function Ensure-NuGetExists
 
 function Prompt-NuGetVersion
 {
-    $NuGetVersion = Read-Host -Prompt "NuGet package new version: "
-    if ([string]::IsNullOrEmpty($NuGetVersion))
+    do
     {
-        Write-Host -ForegroundColor Red "You will need to provide the package version."
-        Throw ("You will need to provide the package version.")
-    }
-    return $NuGetVersion
+        $version = Read-Host -Prompt "NuGet package new version: "
+    } while ([string]::IsNullOrEmpty($version))
+    
+    return $version
 }
 
 function Rebuild-Solution
