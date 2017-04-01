@@ -1,5 +1,5 @@
 # xAPI.NET
-xAPI.NET is a free, open-source xAPI client for .NET. It allows a Learning Record Provider (LRP) to consume the REST API exposed by a Learning Record Store (LRS) compliant with [the xAPI specification](https://github.com/adlnet/xAPI-Spec). Currently, versions 1.0.* of xAPI are partially supported.
+xAPI.NET is a free, open-source xAPI client for .NET. It allows a Learning Record Provider (LRP) to consume the REST API exposed by a Learning Record Store (LRS) compliant with [the xAPI specification](https://github.com/adlnet/xAPI-Spec). Currently, versions 1.0.* of xAPI are [partially supported](#missing-features).
 
 ## Getting Started
 These steps will get you started with xAPI.NET.
@@ -95,7 +95,6 @@ else
 ### Using Visual Studio test explorer and NUnit 3 test adapter
 
 * Clone the repository.
-* Install the [NUnit 3 test adapter extension for Visual Studio](http://nunit.org/?p=download).
 * Start Visual Studio.
 * Build the solution.
 * `Ctrl-R, A` and check out the Test Explorer panel!
@@ -105,12 +104,11 @@ else
 * Clone the repository.
 * Start Visual Studio.
 * Build the solution.
-* Install the [NUnit 3 console app](http://nunit.org/?p=download).
-* `nunit3-console.exe path\to\xAPI.Client.Tests.dll`
+* `path\to\nunit3-console.exe path\to\xAPI.Client.Tests.dll` (the exe should be located in `src\packages\NUnit.ConsoleRunner.3.<y.z>\tools` after the first NuGet package restore)
 
 ## Missing features
 
-* OAuth authentication (currently, the [`OAuthAuthenticator`](xAPI.Client/Authenticators/OAuthAuthenticator.cs) class is not implemented).
+* OAuth authentication (currently, the [`OAuthAuthenticator`](src/xAPI.Client/Authenticators/OAuthAuthenticator.cs) class is not implemented).
 * Attachments in statements ([requests](https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#152-multipartmixed) & [responses](https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#213-get-statements)).
 * Document resources with content types other than `application/json`.
 
