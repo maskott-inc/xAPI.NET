@@ -17,7 +17,7 @@ namespace xAPI.Client.Http.Options
         private readonly Dictionary<string, string> _customHeaders = new Dictionary<string, string>();
         public Dictionary<string, string> CustomHeaders { get { return this._customHeaders; } }
 
-        public string Url
+        public string PathAndQuery
         {
             get
             {

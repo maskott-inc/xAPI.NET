@@ -24,7 +24,6 @@ namespace xAPI.Client.Configuration
         /// </summary>
         public XApiVersion Version { get; set; }
 
-        private HttpClient _httpClient;
         /// <summary>
         /// An instance of .NET HttpClient. If you don't provide
         /// any implementation, the default HttpClient
@@ -32,21 +31,7 @@ namespace xAPI.Client.Configuration
         /// Use this property to override with your own
         /// implementation, e.g. to enable mocking or decoration.
         /// </summary>
-        public HttpClient HttpClient
-        {
-            get
-            {
-                if (this._httpClient == null)
-                {
-                    this._httpClient = new HttpClient();
-                }
-                return this._httpClient;
-            }
-            set
-            {
-                this._httpClient = value;
-            }
-        }
+        public HttpClient HttpClient { get; set; }
 
         /// <summary>
         /// Returns the authenticator associated with this configuration

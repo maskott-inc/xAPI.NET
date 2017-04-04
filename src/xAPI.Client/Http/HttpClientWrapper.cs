@@ -16,6 +16,9 @@ namespace xAPI.Client.Http
     {
         private const string XAPI_VERSION_HEADER = "X-Experience-API-Version";
         private HttpClient _httpClient;
+        private bool _useOwnHttpClient = false;
+        private Uri _baseUri;
+        private XApiVersion _version;
         private ILRSAuthenticator _authenticator;
 
         #region IHttpClientWrapper members
@@ -23,7 +26,9 @@ namespace xAPI.Client.Http
         async Task<HttpResponseMessage> IHttpClientWrapper.GetJson(RequestOptions options)
         {
             // Initialize request
-            var request = new HttpRequestMessage(HttpMethod.Get, options.Url);
+            Uri url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            this.SetXApiVersionHeader(request);
             await this.SetAuthorizationHeader(request);
             this.SetAcceptJsonContentType(request);
             this.SetCustomHeaders(request, options);
@@ -38,7 +43,9 @@ namespace xAPI.Client.Http
         async Task<HttpResponseMessage> IHttpClientWrapper.PutJson<T>(RequestOptions options, T content)
         {
             // Initialize request
-            var request = new HttpRequestMessage(HttpMethod.Put, options.Url);
+            Uri url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            this.SetXApiVersionHeader(request);
             await this.SetAuthorizationHeader(request);
             this.SetCustomHeaders(request, options);
             request.Content = new ObjectContent<T>(content, options.GetFormatter());
@@ -53,7 +60,9 @@ namespace xAPI.Client.Http
         async Task<HttpResponseMessage> IHttpClientWrapper.PostJson<T>(RequestOptions options, T content)
         {
             // Initialize request
-            var request = new HttpRequestMessage(HttpMethod.Post, options.Url);
+            Uri url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            this.SetXApiVersionHeader(request);
             await this.SetAuthorizationHeader(request);
             this.SetCustomHeaders(request, options);
             request.Content = new ObjectContent<T>(content, options.GetFormatter());
@@ -68,7 +77,9 @@ namespace xAPI.Client.Http
         async Task<HttpResponseMessage> IHttpClientWrapper.Delete(RequestOptions options)
         {
             // Handle specific headers
-            var request = new HttpRequestMessage(HttpMethod.Delete, options.Url);
+            Uri url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            this.SetXApiVersionHeader(request);
             await this.SetAuthorizationHeader(request);
             this.SetCustomHeaders(request, options);
 
@@ -101,9 +112,10 @@ namespace xAPI.Client.Http
                 throw new ArgumentException($"Version is not supported. Supported versions are: {supportedVersions}");
             }
 
-            this._httpClient = configuration.HttpClient;
-            this._httpClient.BaseAddress = configuration.EndpointUri;
-            this._httpClient.DefaultRequestHeaders.Add(XAPI_VERSION_HEADER, configuration.Version.ToString());
+            this._useOwnHttpClient = (configuration.HttpClient == null);
+            this._httpClient = configuration.HttpClient ?? new HttpClient();
+            this._baseUri = configuration.EndpointUri;
+            this._version = configuration.Version;
 
             this._authenticator = configuration.GetAuthenticator();
         }
@@ -119,6 +131,11 @@ namespace xAPI.Client.Http
         #endregion
 
         #region Utils
+
+        private void SetXApiVersionHeader(HttpRequestMessage request)
+        {
+            request.Headers.Add(XAPI_VERSION_HEADER, this._version.ToString());
+        }
 
         private async Task SetAuthorizationHeader(HttpRequestMessage request)
         {
@@ -220,7 +237,11 @@ namespace xAPI.Client.Http
             {
                 if (disposing)
                 {
-                    this._httpClient.Dispose();
+                    if (this._useOwnHttpClient)
+                    {
+                        this._httpClient?.Dispose();
+                        this._httpClient = null;
+                    }
                 }
 
                 disposedValue = true;
