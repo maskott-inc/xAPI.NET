@@ -10,7 +10,10 @@ namespace xAPI.Client.Requests
     /// </summary>
     public class PostStatementsRequest : ARequest
     {
-        internal IReadOnlyList<Statement> Statements { get; set; }
+        /// <summary>
+        /// The statements to POST.
+        /// </summary>
+        public IReadOnlyList<Statement> Statements { get; }
 
         /// <summary>
         /// Creates a new instance of PostStatementsRequest.

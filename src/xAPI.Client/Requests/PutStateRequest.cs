@@ -34,7 +34,10 @@ namespace xAPI.Client.Requests
     /// </typeparam>
     public class PutStateRequest<T> : ASingleStateRequest
     {
-        internal StateDocument<T> State { get; private set; }
+        /// <summary>
+        /// The document used for concurrency comparisons.
+        /// </summary>
+        public StateDocument<T> State { get; }
 
         internal PutStateRequest(StateDocument<T> state)
         {
