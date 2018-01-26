@@ -9,7 +9,10 @@ namespace xAPI.Client.Requests
     /// </summary>
     public class PostStatementRequest : ARequest
     {
-        internal Statement Statement { get; set; }
+        /// <summary>
+        /// The statement to POST.
+        /// </summary>
+        public Statement Statement { get; }
 
         /// <summary>
         /// Creates a new instance of PostStatementRequest.

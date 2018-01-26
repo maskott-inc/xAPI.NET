@@ -34,7 +34,10 @@ namespace xAPI.Client.Requests
     /// </typeparam>
     public class PutActivityProfileRequest<T> : ASingleActivityProfileRequest
     {
-        internal ActivityProfileDocument<T> ActivityProfile { get; private set; }
+        /// <summary>
+        /// The document used for concurrency comparisons.
+        /// </summary>
+        public ActivityProfileDocument<T> ActivityProfile { get; }
 
         internal PutActivityProfileRequest(ActivityProfileDocument<T> activityProfile)
         {

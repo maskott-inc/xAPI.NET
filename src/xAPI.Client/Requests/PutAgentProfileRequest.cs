@@ -34,7 +34,10 @@ namespace xAPI.Client.Requests
     /// </typeparam>
     public class PutAgentProfileRequest<T> : ASingleAgentProfileRequest
     {
-        internal AgentProfileDocument<T> AgentProfile { get; private set; }
+        /// <summary>
+        /// The document used for concurrency comparisons.
+        /// </summary>
+        public AgentProfileDocument<T> AgentProfile { get; }
 
         internal PutAgentProfileRequest(AgentProfileDocument<T> agentProfile)
         {

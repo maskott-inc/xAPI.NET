@@ -9,7 +9,10 @@ namespace xAPI.Client.Requests
     /// </summary>
     public class PutStatementRequest : ARequest
     {
-        internal Statement Statement { get; set; }
+        /// <summary>
+        /// The statement to PUT.
+        /// </summary>
+        public Statement Statement { get; }
 
         /// <summary>
         /// Creates a new instance of PutStatementRequest.
