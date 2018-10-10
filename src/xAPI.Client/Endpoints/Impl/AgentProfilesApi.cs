@@ -23,8 +23,6 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IAgentProfilesApi members
-
         async Task<AgentProfileDocument> IAgentProfilesApi.Get(GetAgentProfileRequest request)
         {
             var options = new RequestOptions(ENDPOINT);
@@ -144,10 +142,6 @@ namespace xAPI.Client.Endpoints.Impl
             return await response.Content.ReadAsAsync<List<string>>(new[] { new StrictJsonMediaTypeFormatter() });
         }
 
-        #endregion
-
-        #region Utils
-
         private void CompleteOptionsBase(RequestOptions options, ASingleAgentProfileRequest request)
         {
             string agentStr = JsonConvert.SerializeObject(request.Agent, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
@@ -202,7 +196,5 @@ namespace xAPI.Client.Endpoints.Impl
                 options.CustomHeaders.Add("If-None-Match", "*");
             }
         }
-
-        #endregion
     }
 }

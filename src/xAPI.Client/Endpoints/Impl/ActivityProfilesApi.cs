@@ -22,8 +22,6 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IActivityProfilesApi members
-
         async Task<ActivityProfileDocument> IActivityProfilesApi.Get(GetActivityProfileRequest request)
         {
             if (request == null)
@@ -149,10 +147,6 @@ namespace xAPI.Client.Endpoints.Impl
             return await response.Content.ReadAsAsync<List<string>>(new[] { new StrictJsonMediaTypeFormatter() });
         }
 
-        #endregion
-
-        #region Utils
-
         private void CompleteOptionsBase(RequestOptions options, ASingleActivityProfileRequest request)
         {
             options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
@@ -205,7 +199,5 @@ namespace xAPI.Client.Endpoints.Impl
                 options.CustomHeaders.Add("If-None-Match", "*");
             }
         }
-
-        #endregion
     }
 }

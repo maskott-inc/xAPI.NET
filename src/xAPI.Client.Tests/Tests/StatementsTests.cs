@@ -97,7 +97,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
 
         [Test]
@@ -176,7 +176,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
 
         [Test]
@@ -248,7 +248,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
 
         [Test]
@@ -305,7 +305,7 @@ namespace xAPI.Client.Tests
                 .WithQueryString("format", "canonical")
                 .WithQueryString("ascending", "true")
                 .WithHeaders("Accept-Language", "*")
-                .Respond(this.GetStatementsResponseMessage());
+                .Respond(req => this.GetStatementsResponseMessage());
 
             // Act
             StatementResult result = await this._client.Statements.GetMany(request);
@@ -327,7 +327,7 @@ namespace xAPI.Client.Tests
             var moreAbsoluteUrl = new Uri(hostUrl, more);
             this._mockHttp
                 .When(HttpMethod.Get, moreAbsoluteUrl.ToString())
-                .Respond(this.GetStatementsResponseMessage());
+                .Respond(req => this.GetStatementsResponseMessage());
 
             // Act
             StatementResult result = await this._client.Statements.GetMore(more);

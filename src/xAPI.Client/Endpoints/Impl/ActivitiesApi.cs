@@ -20,8 +20,6 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IActivitiesApi members
-
         async Task<Activity> IActivitiesApi.Get(GetActivityRequest request)
         {
             if (request == null)
@@ -43,7 +41,5 @@ namespace xAPI.Client.Endpoints.Impl
                 return null;
             }
         }
-
-        #endregion
     }
 }

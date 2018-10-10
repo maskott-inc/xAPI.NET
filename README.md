@@ -8,8 +8,8 @@ These steps will get you started with xAPI.NET.
 In order to install xAPI.NET, you need to ensure you have the following things:
 
 * An account on a Learning Record Store (such as [ADL's test LRS](https://lrs.adlnet.gov/), [Learning Locker](https://learninglocker.net/), or any other LRS including your own), and the associated credentials.
-* An install of Visual Studio 2015 or newer.
-* A .NET project from which you wish to consume the LRS.
+* An install of Visual Studio 2017 or newer.
+* A .NET project from which you wish to consume the LRS API.
 * A network connection.
 
 ### Installing
@@ -18,7 +18,7 @@ To install the client, you can either clone the repository and build the library
 ```
 Install-Package xAPI.NET
 ```
-This will install the package and its dependencies ([Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) & [Microsoft.AspNet.WebApi.Client](https://www.asp.net/web-api)). You can also use the integrated NuGet manager panel from Visual Studio.
+This will install the package and its dependencies. You can also use the integrated NuGet manager panel from Visual Studio.
 
 ### Sample code
 ```csharp
@@ -29,82 +29,77 @@ string USERNAME = "demo";
 string PASSWORD = "demo";
 
 // Choose your authentication provider.
-// Currently, only anonymous clients and Basic HTTP are supported.
 var config = new BasicEndpointConfiguration()
 {
     EndpointUri = new Uri(ENDPOINT_URI),
     Version = XApiVersion.Parse(VERSION),
+    HttpClient = null, // use internal HttpClient
     Username = USERNAME,
     Password = PASSWORD
 };
 
 // Create the client
-IXApiClient client = XApiClientFactory.Create(config);
-
-// About resource
-About about = await this._client.About.Get();
-Console.WriteLine(string.Join(", ", about.Versions));
-
-// Activity profile resource
-var request = new GetActivityProfileRequest()
+using (IXApiClient client = new XApiClient(config))
 {
-    ActivityId = new Uri("http://www.example.org/activity"),
-    ProfileId = "<profile_id>"
-};
-ActivityProfileDocument<CustomContent> activityProfile = await this._client.ActivityProfiles.Get<CustomContent>(request);
-Console.WriteLine(activityProfile.Content.CustomField);
+    // About resource
+    About about = await client.About.Get();
+    Console.WriteLine(string.Join(", ", about.Versions));
 
-// Statement resource
-var statement = new Statement()
-{
-    Id = Guid.NewGuid(),
-    Actor = new Agent()
+    // Activity profile resource
+    var request = new GetActivityProfileRequest()
     {
-        Name = "student",
-        MBox = new Uri("mailto:student@example.org")
-    },
-    Verb = new Verb()
+        ActivityId = new Uri("http://www.example.org/activity"),
+        ProfileId = "<profile_id>"
+    };
+    ActivityProfileDocument<CustomContent> activityProfile = await client.ActivityProfiles.Get<CustomContent>(request);
+    Console.WriteLine(activityProfile.Content.CustomField);
+
+    // Statement resource
+    var statement = new Statement()
     {
-        Id = new Uri("http://adlnet.gov/expapi/verbs/attended"),
-        Display = new LanguageMap() { { "en-US", "attended" } }
-    },
-    Object = new Activity()
-    {
-        Id = new Uri("http://www.example.com/meetings/occurances/34534"),
-        Definition = new ActivityDefinition()
+        Id = Guid.NewGuid(),
+        Actor = new Agent()
         {
-            Name = new LanguageMap() { { "en-US", "example meeting" } },
-            Type = new Uri("http://adlnet.gov/expapi/activities/meeting")
+            Name = "student",
+            MBox = new Uri("mailto:student@example.org")
+        },
+        Verb = new Verb()
+        {
+            Id = new Uri("http://adlnet.gov/expapi/verbs/attended"),
+            Display = new LanguageMap() { { "en-US", "attended" } }
+        },
+        Object = new Activity()
+        {
+            Id = new Uri("http://www.example.com/meetings/occurances/34534"),
+            Definition = new ActivityDefinition()
+            {
+                Name = new LanguageMap() { { "en-US", "example meeting" } },
+                Type = new Uri("http://adlnet.gov/expapi/activities/meeting")
+            }
         }
+    };
+    var request = new PostStatementRequest(statement);
+    bool statementCreated = await client.Statements.Post(request);
+    if (statementCreated)
+    {
+        Console.WriteLine("Statement was successfully created!");
     }
-};
-var request = new PostStatementRequest(statement);
-bool statementCreated = await this._client.Statements.Post(request);
-if (statementCreated)
-{
-    Console.WriteLine("Statement was successfully created!");
+    else
+    {
+        Console.WriteLine("A statement with this ID already exists.");
+    }
 }
-else
-{
-    Console.WriteLine("A statement with this ID already exists.");
-}
+
 ```
 
 ## Running the tests
 
-### Using Visual Studio test explorer and NUnit 3 test adapter
+### Using dotnet test
 
 * Clone the repository.
-* Start Visual Studio.
-* Build the solution.
-* `Ctrl-R, A` and check out the Test Explorer panel!
-
-### Using NUnit 3 console
-
-* Clone the repository.
-* Start Visual Studio.
-* Build the solution.
-* `path\to\nunit3-console.exe path\to\xAPI.Client.Tests.dll` (the exe should be located in `src\packages\NUnit.ConsoleRunner.3.<y.z>\tools` after the first NuGet package restore)
+* Open a cmd or powershell terminal.
+* cd into the test project.
+* Run the command `dotnet test`.
 
 ## Missing features
 

@@ -22,7 +22,7 @@ namespace xAPI.Client.Tests
         public async Task can_get_agent_definition()
         {
             // Arrange
-            GetAgentRequest request = new GetAgentRequest()
+            var request = new GetAgentRequest()
             {
                 Agent = new Agent()
                 {
@@ -48,7 +48,7 @@ namespace xAPI.Client.Tests
         public void cannot_get_agent_definition_when_unauthorized()
         {
             // Arrange
-            GetAgentRequest request = new GetAgentRequest()
+            var request = new GetAgentRequest()
             {
                 Agent = new Agent()
                 {
@@ -68,7 +68,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
     }
 }

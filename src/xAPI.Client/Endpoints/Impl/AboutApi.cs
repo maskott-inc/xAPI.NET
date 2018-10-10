@@ -17,15 +17,11 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IAboutApi members
-
         async Task<About> IAboutApi.Get()
         {
             var options = new RequestOptions(ENDPOINT);
             HttpResponseMessage response = await this._client.GetJson(options);
             return await response.Content.ReadAsAsync<About>(new[] { new StrictJsonMediaTypeFormatter() });
         }
-
-        #endregion
     }
 }

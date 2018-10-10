@@ -36,7 +36,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("activities/profile"))
                 .WithQueryString("activityId", ACTIVITY_ID)
                 .WithQueryString("profileId", PROFILE_ID)
-                .Respond(this.GetActivityProfileResponseMessage());
+                .Respond(req => this.GetActivityProfileResponseMessage());
 
             // Act
             ActivityProfileDocument activityProfile = await this._client.ActivityProfiles.Get(request);
@@ -62,7 +62,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("activities/profile"))
                 .WithQueryString("activityId", ACTIVITY_ID)
                 .WithQueryString("profileId", PROFILE_ID)
-                .Respond(this.GetActivityProfileResponseMessage());
+                .Respond(req => this.GetActivityProfileResponseMessage());
 
             // Act
             ActivityProfileDocument<string> activityProfile = await this._client.ActivityProfiles.Get<string>(request);
@@ -96,7 +96,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
 
         [Test]

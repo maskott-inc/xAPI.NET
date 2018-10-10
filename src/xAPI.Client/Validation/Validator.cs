@@ -12,10 +12,10 @@ namespace xAPI.Client.Validation
             var context = new DA.ValidationContext(objectToValidate);
             var validationResults = new List<DA.ValidationResult>();
 
-            bool isValid = DA.Validator.TryValidateObject(objectToValidate, context, validationResults, true);
+            bool isValid = DA.Validator.TryValidateObject(objectToValidate, context, validationResults, validateAllProperties: true);
             if (!isValid)
             {
-                List<ValidationError> errors = validationResults
+                var errors = validationResults
                     .Select(x => new ValidationError(x.MemberNames, x.ErrorMessage, GetInnerErrors(x)))
                     .ToList();
                 throw new ValidationException(objectToValidate, errors);
@@ -24,9 +24,8 @@ namespace xAPI.Client.Validation
 
         private static IEnumerable<ValidationError> GetInnerErrors(DA.ValidationResult validationResult)
         {
-            if (validationResult is CompositeValidationResult)
+            if (validationResult is CompositeValidationResult compositeValidationResult)
             {
-                CompositeValidationResult compositeValidationResult = (CompositeValidationResult)validationResult;
                 return compositeValidationResult.InnerResults
                     .Select(x => new ValidationError(x.MemberNames, x.ErrorMessage, GetInnerErrors(x)))
                     .ToList();

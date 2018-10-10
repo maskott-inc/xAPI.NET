@@ -7,7 +7,7 @@ namespace xAPI.Client.Json
 {
     internal class ObjectResourceConverter<T> : JsonConverter where T : IObjectResource
     {
-        public override bool CanWrite { get { return false; } }
+        public override bool CanWrite => false;
 
         public override bool CanConvert(Type objectType)
         {
@@ -22,7 +22,7 @@ namespace xAPI.Client.Json
             }
             else if (reader.TokenType == JsonToken.StartObject)
             {
-                JObject obj = JObject.Load(reader);
+                var obj = JObject.Load(reader);
                 string jsonObjectType = (string)obj["objectType"];
                 IObjectResource target = this.CreateEmptyObject(objectType, jsonObjectType);
                 serializer.Populate(obj.CreateReader(), target);

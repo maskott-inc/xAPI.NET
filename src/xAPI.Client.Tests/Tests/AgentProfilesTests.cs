@@ -42,7 +42,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("agents/profile"))
                 .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
-                .Respond(this.GetAgentProfileResponseMessage());
+                .Respond(req => this.GetAgentProfileResponseMessage());
 
             // Act
             AgentProfileDocument agentProfile = await this._client.AgentProfiles.Get(request);
@@ -72,7 +72,7 @@ namespace xAPI.Client.Tests
                 .When(HttpMethod.Get, this.GetApiUrl("agents/profile"))
                 .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("profileId", PROFILE_ID)
-                .Respond(this.GetAgentProfileResponseMessage());
+                .Respond(req => this.GetAgentProfileResponseMessage());
 
             // Act
             AgentProfileDocument<string> agentProfile = await this._client.AgentProfiles.Get<string>(request);
@@ -110,7 +110,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
 
         [Test]

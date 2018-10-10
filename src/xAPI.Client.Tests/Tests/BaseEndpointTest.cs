@@ -26,7 +26,7 @@ namespace xAPI.Client.Tests
             config.EndpointUri = new Uri(ENDPOINT_URI);
             config.Version = XApiVersion.Parse(VERSION);
             config.HttpClient = this._mockHttp.ToHttpClient();
-            this._client = XApiClientFactory.Create(config);
+            this._client = new XApiClient(config);
         }
 
         [TearDown]

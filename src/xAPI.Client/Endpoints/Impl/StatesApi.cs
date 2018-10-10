@@ -23,8 +23,6 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IStatesApi members
-
         async Task<StateDocument> IStatesApi.Get(GetStateRequest request)
         {
             if (request == null)
@@ -164,10 +162,6 @@ namespace xAPI.Client.Endpoints.Impl
             await this._client.Delete(options);
         }
 
-        #endregion
-
-        #region Utils
-
         private void CompleteOptionsBase(RequestOptions options, ASingleStateRequest request)
         {
             options.QueryStringParameters.Add("activityId", request.ActivityId.ToString());
@@ -243,7 +237,5 @@ namespace xAPI.Client.Endpoints.Impl
                 options.CustomHeaders.Add("If-None-Match", "*");
             }
         }
-
-        #endregion
     }
 }

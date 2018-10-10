@@ -79,7 +79,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
     }
 }

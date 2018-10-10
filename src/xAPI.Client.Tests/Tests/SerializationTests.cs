@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using JsonDiffPatchDotNet;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -11,7 +10,6 @@ namespace xAPI.Client.Tests.Tests
     public class SerializationTests : BaseTest
     {
         private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error };
-        private static readonly JsonDiffPatch _differ = new JsonDiffPatch();
 
         [Test]
         public void can_deserialize_about_without_missing_members()
@@ -70,16 +68,20 @@ namespace xAPI.Client.Tests.Tests
         {
             // Arrange
             string originalJson = this.ReadDataFile(Constants.STATEMENT_FULL);
-            JToken originalData = JToken.Parse(originalJson);
+            var originalData = JToken.Parse(originalJson);
             Statement resource = JsonConvert.DeserializeObject<Statement>(originalJson);
             string targetJson = JsonConvert.SerializeObject(resource, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore });
-            JToken targetData = JToken.Parse(targetJson);
+            var targetData = JToken.Parse(targetJson);
 
             // Act
-            JToken diff = _differ.Diff(originalData, targetData);
+            bool deepEqual = JToken.DeepEquals(originalData, targetData);
 
             // Assert
-            diff.Should().BeNull();
+            deepEqual.Should().BeTrue(
+                "Original JSON {0} differs from target JSON {1}",
+                JsonConvert.SerializeObject(originalData, Formatting.Indented),
+                JsonConvert.SerializeObject(targetData, Formatting.Indented)
+            );
         }
     }
 }

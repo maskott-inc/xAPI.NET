@@ -16,85 +16,12 @@ namespace xAPI.Client.Http
     {
         private const string XAPI_VERSION_HEADER = "X-Experience-API-Version";
         private HttpClient _httpClient;
-        private bool _useOwnHttpClient = false;
-        private Uri _baseUri;
-        private XApiVersion _version;
-        private ILRSAuthenticator _authenticator;
+        private readonly bool _useOwnHttpClient = false;
+        private readonly Uri _baseUri;
+        private readonly XApiVersion _version;
+        private readonly ILRSAuthenticator _authenticator;
 
-        #region IHttpClientWrapper members
-
-        async Task<HttpResponseMessage> IHttpClientWrapper.GetJson(RequestOptions options)
-        {
-            // Initialize request
-            Uri url = new Uri(this._baseUri, options.PathAndQuery);
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            this.SetXApiVersionHeader(request);
-            await this.SetAuthorizationHeader(request);
-            this.SetAcceptJsonContentType(request);
-            this.SetCustomHeaders(request, options);
-
-            // Perform request
-            HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
-
-            return response;
-        }
-
-        async Task<HttpResponseMessage> IHttpClientWrapper.PutJson<T>(RequestOptions options, T content)
-        {
-            // Initialize request
-            Uri url = new Uri(this._baseUri, options.PathAndQuery);
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
-            this.SetXApiVersionHeader(request);
-            await this.SetAuthorizationHeader(request);
-            this.SetCustomHeaders(request, options);
-            request.Content = new ObjectContent<T>(content, options.GetFormatter());
-
-            // Perform request
-            HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
-
-            return response;
-        }
-
-        async Task<HttpResponseMessage> IHttpClientWrapper.PostJson<T>(RequestOptions options, T content)
-        {
-            // Initialize request
-            Uri url = new Uri(this._baseUri, options.PathAndQuery);
-            var request = new HttpRequestMessage(HttpMethod.Post, url);
-            this.SetXApiVersionHeader(request);
-            await this.SetAuthorizationHeader(request);
-            this.SetCustomHeaders(request, options);
-            request.Content = new ObjectContent<T>(content, options.GetFormatter());
-
-            // Perform request
-            HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
-
-            return response;
-        }
-
-        async Task<HttpResponseMessage> IHttpClientWrapper.Delete(RequestOptions options)
-        {
-            // Handle specific headers
-            Uri url = new Uri(this._baseUri, options.PathAndQuery);
-            var request = new HttpRequestMessage(HttpMethod.Delete, url);
-            this.SetXApiVersionHeader(request);
-            await this.SetAuthorizationHeader(request);
-            this.SetCustomHeaders(request, options);
-
-            // Perform request
-            HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
-
-            return response;
-        }
-
-        #endregion
-
-        #region Public methods
-
-        public void SetConfiguration(EndpointConfiguration configuration)
+        public HttpClientWrapper(EndpointConfiguration configuration)
         {
             if (configuration == null)
             {
@@ -120,17 +47,72 @@ namespace xAPI.Client.Http
             this._authenticator = configuration.GetAuthenticator();
         }
 
-        public void EnsureConfigured()
+        async Task<HttpResponseMessage> IHttpClientWrapper.GetJson(RequestOptions options)
         {
-            if (this._httpClient == null || this._authenticator == null)
-            {
-                throw new ConfigurationException($"xAPI client is not configured. Please call the {nameof(SetConfiguration)} method before accessing resources.");
-            }
+            // Initialize request
+            var url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            this.SetXApiVersionHeader(request);
+            await this.SetAuthorizationHeader(request);
+            this.SetAcceptJsonContentType(request);
+            this.SetCustomHeaders(request, options);
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
+            this.EnsureResponseIsValid(response);
+
+            return response;
         }
 
-        #endregion
+        async Task<HttpResponseMessage> IHttpClientWrapper.PutJson<T>(RequestOptions options, T content)
+        {
+            // Initialize request
+            var url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            this.SetXApiVersionHeader(request);
+            await this.SetAuthorizationHeader(request);
+            this.SetCustomHeaders(request, options);
+            request.Content = new ObjectContent<T>(content, options.GetFormatter());
 
-        #region Utils
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
+            this.EnsureResponseIsValid(response);
+
+            return response;
+        }
+
+        async Task<HttpResponseMessage> IHttpClientWrapper.PostJson<T>(RequestOptions options, T content)
+        {
+            // Initialize request
+            var url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            this.SetXApiVersionHeader(request);
+            await this.SetAuthorizationHeader(request);
+            this.SetCustomHeaders(request, options);
+            request.Content = new ObjectContent<T>(content, options.GetFormatter());
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
+            this.EnsureResponseIsValid(response);
+
+            return response;
+        }
+
+        async Task<HttpResponseMessage> IHttpClientWrapper.Delete(RequestOptions options)
+        {
+            // Handle specific headers
+            var url = new Uri(this._baseUri, options.PathAndQuery);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            this.SetXApiVersionHeader(request);
+            await this.SetAuthorizationHeader(request);
+            this.SetCustomHeaders(request, options);
+
+            // Perform request
+            HttpResponseMessage response = await this._httpClient.SendAsync(request);
+            this.EnsureResponseIsValid(response);
+
+            return response;
+        }
 
         private void SetXApiVersionHeader(HttpRequestMessage request)
         {
@@ -225,15 +207,11 @@ namespace xAPI.Client.Http
             }
         }
 
-        #endregion
-
-        #region IDisposable Support
-
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -244,7 +222,7 @@ namespace xAPI.Client.Http
                     }
                 }
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -252,9 +230,7 @@ namespace xAPI.Client.Http
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
         }
-
-        #endregion
     }
 }

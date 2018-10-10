@@ -48,7 +48,7 @@ namespace xAPI.Client.Tests
                 .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
-                .Respond(this.GetStateResponseMessage());
+                .Respond(req => this.GetStateResponseMessage());
 
             // Act
             StateDocument state = await this._client.States.Get(request);
@@ -82,7 +82,7 @@ namespace xAPI.Client.Tests
                 .WithQueryString("agent", AGENT_QS)
                 .WithQueryString("registration", REGISTRATION.ToString())
                 .WithQueryString("stateId", STATE_ID)
-                .Respond(this.GetStateResponseMessage());
+                .Respond(req => this.GetStateResponseMessage());
 
             // Act
             StateDocument<string> state = await this._client.States.Get<string>(request);
@@ -124,7 +124,7 @@ namespace xAPI.Client.Tests
             };
 
             // Assert
-            action.ShouldThrow<ForbiddenException>();
+            action.Should().Throw<ForbiddenException>();
         }
 
         [Test]
@@ -485,7 +485,7 @@ namespace xAPI.Client.Tests
             Func<Task> action = async () => await this._client.States.DeleteMany(request);
 
             // Assert
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         private HttpResponseMessage GetStateResponseMessage()

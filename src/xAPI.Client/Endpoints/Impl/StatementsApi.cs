@@ -26,8 +26,6 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IStatementsApi members
-
         async Task<Statement> IStatementsApi.Get(GetStatementRequest request)
         {
             if (request == null)
@@ -154,10 +152,6 @@ namespace xAPI.Client.Endpoints.Impl
             }
         }
 
-        #endregion
-
-        #region Utils
-
         private void CompleteOptions(RequestOptions options, GetStatementRequest request)
         {
             if (request.StatementId.HasValue)
@@ -248,22 +242,18 @@ namespace xAPI.Client.Endpoints.Impl
 
         private DateTimeOffset GetConsistentThroughHeader(HttpResponseHeaders headers)
         {
-            IEnumerable<string> values;
-            if (!headers.TryGetValues(XAPI_CONSISTENT_THROUGH_HEADER, out values))
+            if (!headers.TryGetValues(XAPI_CONSISTENT_THROUGH_HEADER, out IEnumerable<string> values))
             {
                 throw new LRSException($"Header {XAPI_CONSISTENT_THROUGH_HEADER} is missing from LRS response");
             }
 
             string header = values.First();
-            DateTimeOffset date;
-            if (!DateTimeOffset.TryParse(header, out date))
+            if (!DateTimeOffset.TryParse(header, out DateTimeOffset date))
             {
                 throw new LRSException($"Header {XAPI_CONSISTENT_THROUGH_HEADER} is not in a valid DateTime format");
             }
 
             return date;
         }
-
-        #endregion
     }
 }

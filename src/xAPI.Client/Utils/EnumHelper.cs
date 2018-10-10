@@ -10,7 +10,7 @@ namespace xAPI.Client.Utils
         {
             Type enumType = typeof(T);
             string name = Enum.GetName(enumType, type);
-            EnumMemberAttribute enumMemberAttribute = (EnumMemberAttribute)enumType
+            var enumMemberAttribute = (EnumMemberAttribute)enumType
                 .GetField(name)
                 .GetCustomAttributes(typeof(EnumMemberAttribute), inherit: true)
                 .FirstOrDefault();

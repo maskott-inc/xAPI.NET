@@ -1,8 +1,5 @@
 bin
 obj
-*.suo
-*.user
 .vs
-packages
-build/output/*
-tools/NuGet/*
+build/logs/*
+build/*.nupkg

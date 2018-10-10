@@ -20,8 +20,6 @@ namespace xAPI.Client.Endpoints.Impl
             this._client = client;
         }
 
-        #region IAgentsApi members
-
         async Task<Person> IAgentsApi.Get(GetAgentRequest request)
         {
             if (request == null)
@@ -37,7 +35,5 @@ namespace xAPI.Client.Endpoints.Impl
             HttpResponseMessage response = await this._client.GetJson(options);
             return await response.Content.ReadAsAsync<Person>(new[] { new StrictJsonMediaTypeFormatter() });
         }
-
-        #endregion
     }
 }

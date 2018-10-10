@@ -12,14 +12,13 @@ namespace xAPI.Client.Json
 {
     internal class StrictJsonMediaTypeFormatter : MediaTypeFormatter
     {
-        private readonly JsonSerializerSettings _jsonSerializerSettings;
-        public JsonSerializerSettings SerializerSettings { get { return this._jsonSerializerSettings; } }
+        public JsonSerializerSettings SerializerSettings { get; private set; }
 
         public StrictJsonMediaTypeFormatter()
         {
             this.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
             this.SupportedEncodings.Add(new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
-            this._jsonSerializerSettings = new JsonSerializerSettings()
+            this.SerializerSettings = new JsonSerializerSettings()
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.None
@@ -66,12 +65,12 @@ namespace xAPI.Client.Json
             }
 
             // Get the character encoding for the content
-            Encoding effectiveEncoding = SelectCharacterEncoding(content?.Headers);
+            Encoding effectiveEncoding = this.SelectCharacterEncoding(content?.Headers);
 
             // Deserialize
             using (var jsonTextReader = new JsonTextReader(new StreamReader(readStream, effectiveEncoding)) { CloseInput = false })
             {
-                JsonSerializer serializer = JsonSerializer.Create(this._jsonSerializerSettings);
+                var serializer = JsonSerializer.Create(this.SerializerSettings);
                 object result = serializer.Deserialize(jsonTextReader, type);
                 return Task.FromResult(result);
             }
@@ -90,17 +89,17 @@ namespace xAPI.Client.Json
             }
 
             // Get the character encoding for the content
-            Encoding effectiveEncoding = SelectCharacterEncoding(content?.Headers);
+            Encoding effectiveEncoding = this.SelectCharacterEncoding(content?.Headers);
 
             // Serialize
             using (var jsonTextWriter = new JsonTextWriter(new StreamWriter(writeStream, effectiveEncoding)) { CloseOutput = false, Formatting = Formatting.Indented })
             {
-                JsonSerializer serializer = JsonSerializer.Create(this._jsonSerializerSettings);
+                var serializer = JsonSerializer.Create(this.SerializerSettings);
                 serializer.Serialize(jsonTextWriter, value);
                 jsonTextWriter.Flush();
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
     }
 }
