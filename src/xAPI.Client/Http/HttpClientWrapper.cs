@@ -165,14 +165,11 @@ namespace xAPI.Client.Http
                 return;
             }
 
-            // The content won't be used, so we don't need it anymore
-            var reason = response.Content == null ? null : await response.Content.ReadAsStringAsync();
-            response.Content?.Dispose();
-
             // Throws appropriate HTTP exception
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                throw new BadRequestException(reason ?? response.ReasonPhrase);
+                string body = await response.Content.ReadAsStringAsync();
+                throw new BadRequestException(body ?? response.ReasonPhrase);
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
