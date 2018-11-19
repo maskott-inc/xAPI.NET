@@ -7,7 +7,7 @@
     <PackageTags>xAPI TinCan experience learning LRS LRP</PackageTags>
     <RepositoryUrl>https://github.com/maskott-inc/xAPI.NET</RepositoryUrl>
     <PackageProjectUrl>https://github.com/maskott-inc/xAPI.NET</PackageProjectUrl>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <PackageLicenseUrl>https://raw.github.com/maskott-inc/xAPI.NET/master/LICENSE</PackageLicenseUrl>
     <Product>xAPI.NET Client</Product>
   </PropertyGroup>
