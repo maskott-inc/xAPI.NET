@@ -2,4 +2,5 @@ bin
 obj
 .vs
 build/logs/*
+build/NuGet.config
 build/*.nupkg
