@@ -59,7 +59,7 @@ namespace xAPI.Client.Http
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
+            await this.EnsureResponseIsValid(response);
 
             return response;
         }
@@ -76,7 +76,7 @@ namespace xAPI.Client.Http
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
+            await this.EnsureResponseIsValid(response);
 
             return response;
         }
@@ -93,7 +93,7 @@ namespace xAPI.Client.Http
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
+            await this.EnsureResponseIsValid(response);
 
             return response;
         }
@@ -109,7 +109,7 @@ namespace xAPI.Client.Http
 
             // Perform request
             HttpResponseMessage response = await this._httpClient.SendAsync(request);
-            this.EnsureResponseIsValid(response);
+            await this.EnsureResponseIsValid(response);
 
             return response;
         }
@@ -158,7 +158,7 @@ namespace xAPI.Client.Http
             }
         }
 
-        private void EnsureResponseIsValid(HttpResponseMessage response)
+        private async Task EnsureResponseIsValid(HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)
             {
@@ -166,12 +166,13 @@ namespace xAPI.Client.Http
             }
 
             // The content won't be used, so we don't need it anymore
+            var reason = response.Content == null ? null : await response.Content.ReadAsStringAsync();
             response.Content?.Dispose();
 
             // Throws appropriate HTTP exception
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                throw new BadRequestException(response.ReasonPhrase);
+                throw new BadRequestException(reason ?? response.ReasonPhrase);
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
